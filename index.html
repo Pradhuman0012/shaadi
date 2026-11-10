@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>सोमेश की शादी – चेकलिस्ट</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F3F5;--surface:#FFFFFF;--ink:#1C2230;--muted:#5D6574;--line:#E1E4E9;
+  --accent:#8A1C2B;--accent-soft:#F6E8EA;--ok:#2F7A4D;
+  --urgent:#B42318;--urgent-soft:#FDECEA;--soon:#9A5A06;--soon-soft:#FCF1DF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#14161B;--surface:#1D2028;--ink:#E9EBEF;--muted:#A3A9B5;--line:#2E323C;
+    --accent:#EE97A6;--accent-soft:#3A2329;--ok:#71C493;
+    --urgent:#F4938A;--urgent-soft:#3B2321;--soon:#F0B562;--soon-soft:#392D1B;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#14161B;--surface:#1D2028;--ink:#E9EBEF;--muted:#A3A9B5;--line:#2E323C;
+  --accent:#EE97A6;--accent-soft:#3A2329;--ok:#71C493;
+  --urgent:#F4938A;--urgent-soft:#3B2321;--soon:#F0B562;--soon-soft:#392D1B;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Mukta","Noto Sans Devanagari","Nirmala UI",system-ui,sans-serif;font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+main{max-width:820px;margin:0 auto;padding:16px 16px 56px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.hide{display:none!important}
+
+.top{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px}
+.top h1{margin:0;font-size:1.6rem;font-weight:700;line-height:1.2}
+.top p{margin:2px 0 0;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 12px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.stat b{display:block;font-size:1.45rem;font-weight:700;line-height:1.2}
+.stat span{font-size:.85rem;color:var(--muted)}
+.stat.u b{color:var(--urgent)}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+
+.alert{margin:12px 0 0;padding:10px 14px;border-radius:10px;background:var(--accent-soft);font-size:.95rem}
+
+.toolbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0 8px;margin-top:12px}
+#tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 12px;cursor:pointer;font-size:.93rem;white-space:nowrap}
+.tab small{color:var(--muted);margin-left:4px}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.tab[aria-selected="true"] small{color:inherit;opacity:.85}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:4px}
+.filters{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}
+.filters label{display:flex;flex-direction:column;gap:2px;font-size:.82rem;color:var(--muted);flex:1 1 140px}
+.filters select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:.95rem;color:var(--ink)}
+.link{background:none;border:none;padding:2px 4px;cursor:pointer;color:var(--accent);font-size:.9rem;font-weight:500}
+.link.danger{color:var(--urgent)}
+.link.armed{background:var(--urgent);color:var(--surface);border-radius:6px;padding:2px 8px}
+.ph{font-size:.82rem;font-weight:500;color:var(--muted);margin:12px 0 6px}
+#people{display:flex;flex-wrap:wrap;gap:8px}
+.pwrap{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.pchip{border:none;background:var(--surface);padding:5px 10px;cursor:pointer;text-align:left;line-height:1.3}
+.pchip b{font-weight:600;display:block}
+.pchip span{font-size:.8rem;color:var(--muted)}
+.pwrap.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.pedit{border:none;border-left:1px solid var(--line);background:var(--bg);color:var(--accent);padding:0 10px;cursor:pointer;font-size:.85rem}
+.pnone{border:1px dashed var(--line);border-radius:8px;background:none;padding:5px 10px;cursor:pointer;text-align:left;line-height:1.3}
+.pnone b{display:block;font-weight:600}
+.pnone span{font-size:.8rem;color:var(--muted)}
+.pnone.on{border-color:var(--accent);border-style:solid}
+.prename{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px;border:1px solid var(--accent);border-radius:8px;width:100%}
+.prename input{flex:1 1 160px;min-width:0;padding:5px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.prename small{flex-basis:100%;color:var(--muted);font-size:.8rem}
+.pempty{margin:0;color:var(--muted);font-size:.9rem}
+
+.btn{border:none;border-radius:8px;padding:6px 14px;background:var(--accent);color:var(--surface);cursor:pointer;font-weight:500}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--muted)}
+
+section{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 14px 10px}
+.shead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.shead h2{margin:0;font-size:1.2rem;font-weight:700}
+.scount{font-size:.88rem;color:var(--muted);white-space:nowrap}
+.sdesc{margin:2px 0 6px;color:var(--muted);font-size:.9rem}
+
+ul{list-style:none;margin:0;padding:0}
+.item{border-top:1px solid var(--line);padding:10px 0}
+.itop{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.itop input{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin-top:3px;border:2px solid var(--muted);border-radius:5px;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
+.itop input:checked{background:var(--ok);border-color:var(--ok)}
+.itop input:checked::after{content:"";width:5px;height:10px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.ibody{flex:1;min-width:0}
+.t{font-weight:500}
+.done .t{text-decoration:line-through;color:var(--muted)}
+.tag{display:inline-block;font-size:.75rem;font-weight:600;padding:0 8px;border-radius:999px;margin-left:8px;vertical-align:1px}
+.tag.urgent{background:var(--urgent-soft);color:var(--urgent)}
+.tag.soon{background:var(--soon-soft);color:var(--soon)}
+.sub{display:block;font-size:.86rem;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:6px 0 0 32px}
+.whol{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--muted)}
+.whol input{width:150px;max-width:46vw;padding:3px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:.9rem}
+.whol input:not(:placeholder-shown){border-color:var(--accent);color:var(--ink);font-weight:500}
+.acts{display:flex;gap:4px;margin-left:auto}
+.editrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 32px}
+.editrow input{flex:1 1 220px;min-width:0;padding:5px 9px;border:1px solid var(--accent);border-radius:6px;background:var(--bg)}
+.notebox{display:block;margin:8px 0 0 32px;width:calc(100% - 32px);padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.92rem;line-height:1.5;resize:none;overflow:hidden}
+.calls{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0 32px}
+.calls:empty{display:none}
+.calls a{font-size:.85rem;color:var(--ok);text-decoration:none;border:1px solid var(--ok);border-radius:6px;padding:1px 8px}
+
+.event{border-top:1px solid var(--line);padding:10px 0 2px}
+.event:first-of-type{border-top:none}
+.ehead{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline}
+.ehead b{font-weight:600}
+.ehead span{font-size:.86rem;color:var(--accent)}
+.event .item{border-top:none;padding:6px 0}
+
+.mrow{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:4px 16px;border-top:1px solid var(--line);padding:9px 0}
+.mrow:first-of-type{border-top:none}
+.mrow b{display:block;font-weight:600}
+.mrow small{color:var(--muted);font-size:.84rem}
+.mrow p{margin:0}
+@media (max-width:520px){.mrow{grid-template-columns:1fr}}
+
+.add{display:flex;gap:8px;margin-top:8px;border-top:1px solid var(--line);padding-top:10px}
+.eadd{margin:4px 0 6px 32px;border-top:none;padding-top:0}
+.add input{flex:1;min-width:0;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+
+.empty{text-align:center;color:var(--muted);margin:28px 0}
+footer{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:36px}
+@media (max-width:480px){.stats{gap:6px}.stat{padding:6px 8px}.stat b{font-size:1.2rem}.stat span{font-size:.78rem}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.link{border:1px solid var(--line);border-radius:8px;padding:5px 10px;min-height:34px;font-size:.88rem}
+.link.danger{border-color:var(--urgent-soft)}
+#fClear{border:none}
+.whol input,.add input,.editrow input,.notebox,.filters select,.prename input{font-size:16px}
+.btn{min-height:38px}
+.itop input{width:22px;height:22px}
+details.panel>summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.panel>summary::-webkit-details-marker{display:none}
+details.panel>summary::after{content:"+";font-size:1.3rem;color:var(--muted);line-height:1}
+details.panel[open]>summary::after{content:"–"}
+details.panel[open]>summary{margin-bottom:10px}
+@media (max-width:600px){
+  main{padding:10px 10px 48px}
+  .top{padding:14px}
+  .top h1{font-size:1.35rem}
+  section{padding:12px 12px 8px;border-radius:10px}
+  .meta{margin-left:0;margin-top:8px}
+  .whol{flex:1 1 100%}
+  .whol input{flex:1;width:auto;max-width:none}
+  .acts{margin-left:0;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .acts .link{text-align:center}
+  .editrow,.calls,.eadd{margin-left:0}
+  .notebox{margin-left:0;width:100%}
+  .filters label{flex:1 1 45%}
+  #people{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+  .pwrap,.pnone{flex:none}
+}
+
+.item{border-top:1px solid var(--line);padding:0}
+.irow{display:flex;align-items:flex-start;gap:12px;padding:12px 0}
+.cb{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;margin:2px 0 0;border:2px solid var(--muted);border-radius:6px;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
+.cb:checked{background:var(--ok);border-color:var(--ok)}
+.cb:checked::after{content:"";width:5px;height:10px;border:solid var(--surface);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.ihead{flex:1;min-width:0;display:grid;grid-template-columns:1fr auto;column-gap:10px;text-align:left;background:none;border:none;padding:0;cursor:pointer;color:inherit;font-size:1rem}
+.ihead>*{grid-column:1}
+.ihead .t{font-weight:500;line-height:1.4}
+.ihead .sub{font-size:.85rem;margin-top:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ihead .chev{grid-column:2;grid-row:1 / span 3;align-self:center;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s;margin:0 4px 4px}
+.open .chev{transform:rotate(-135deg);margin:4px 4px 0}
+.tag{margin-left:0}
+.chip{font-size:.75rem;font-weight:600;padding:0 8px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.chip.who{color:var(--accent);background:var(--accent-soft);border-color:transparent}
+.idetail{margin:0 0 12px 34px;padding:12px;border-radius:10px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.flab{font-size:.8rem;color:var(--muted);font-weight:500}
+.fld input,.fld textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:16px;color:var(--ink);line-height:1.5}
+.fld textarea{resize:none;overflow:hidden}
+.idetail .calls{margin:0}
+.idetail .acts{display:flex;gap:8px;margin:0;width:auto}
+.idetail .acts .link{flex:1;text-align:center;background:var(--surface)}
+.idetail .editrow{margin:0}
+.idetail .editrow input{background:var(--surface)}
+.event .item{border-top:1px solid var(--line)}
+@media (max-width:600px){.idetail{margin-left:0}.ihead .sub{font-size:.82rem}}
+@media (prefers-reduced-motion:reduce){.ihead .chev{transition:none}}
+
+.mrow{grid-template-columns:minmax(120px,190px) 1fr auto;align-items:start}
+.mlink{align-self:start;white-space:nowrap}
+.mform{display:flex;flex-direction:column;gap:10px;padding:12px;margin:8px 0;border-radius:10px;background:var(--bg)}
+.mform textarea{resize:none;overflow:hidden}
+.mform .acts{display:flex;gap:8px;margin:0;width:auto}
+.mform .acts .link{margin-left:auto;background:var(--surface)}
+.madd{width:100%;margin-top:8px}
+@media (max-width:600px){
+  .mrow{grid-template-columns:1fr auto}
+  .mrow .mname{grid-column:1;grid-row:1}
+  .mrow .mlink{grid-column:2;grid-row:1}
+  .mrow p{grid-column:1 / -1;grid-row:2}
+}
+.sync{margin:0 0 10px;font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.sync::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.sync.on::before{background:var(--ok)}
+.codebox{display:flex;gap:8px;margin:0 0 12px}
+.codebox input{flex:1;min-width:0;padding:7px 10px;border:1px solid var(--accent);border-radius:8px;background:var(--bg);font-size:16px;color:var(--ink)}
+.sync.off::before{background:var(--soon)}
+.sync a{color:var(--accent);font-weight:600}
+.move{margin-top:28px}
+.move>*:not(summary){margin:8px 0 0}
+.mhelp{font-size:.88rem;color:var(--muted);margin:6px 0 0}
+.movebox{display:block;width:100%;min-height:80px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:16px;color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>सोमेश की शादी</h1>
+  <p>तैयारी की चेकलिस्ट, 10–11 फ़रवरी 2027, भीलवाड़ा</p>
+  <div class="stats">
+    <div class="stat"><b id="sDays">–</b><span id="sDaysL">दिन बाकी</span></div>
+    <div class="stat"><b id="sDone">–</b><span>काम पूरे</span></div>
+    <div class="stat u"><b id="sUrg">–</b><span>तुरंत वाले बाकी</span></div>
+  </div>
+  <p id="sync" class="sync"></p>
+  <div id="codeBox" class="codebox" hidden><input id="codeIn" type="password" placeholder="फ़ैमिली कोड" aria-label="फ़ैमिली कोड"><button type="button" class="btn" id="codeBtn">Open</button></div>
+  <div class="bar" role="progressbar" aria-label="कुल प्रगति"><i id="pbar"></i></div>
+  <p class="alert"><b>ध्यान दें:</b> 11 फ़रवरी वसंत पंचमी का अबूझ सावा है, इस दिन बहुत शादियाँ होती हैं। “तुरंत” वाली बुकिंग जल्दी पूरी करें और हर एडवांस की रसीद लें।</p>
+</header>
+
+<div class="toolbar"><nav id="tabs" role="tablist" aria-label="सेक्शन"></nav></div>
+
+<details class="panel" id="fpanel">
+  <summary>फ़िल्टर और ज़िम्मेदार</summary>
+  <div class="filters" role="group" aria-label="फ़िल्टर">
+    <label>ज़िम्मेदार<select id="fWho"><option value="all">सभी</option></select></label>
+    <label>स्थिति<select id="fStatus"><option value="all">सभी</option><option value="todo">बाकी</option><option value="done">पूरे</option></select></label>
+    <label>प्राथमिकता<select id="fTag"><option value="all">सभी</option><option value="urgent">सिर्फ़ तुरंत</option><option value="soon">तुरंत और जल्दी</option></select></label>
+    <button type="button" class="link" id="fClear" hidden>Clear filters</button>
+  </div>
+  <h2 class="ph">किसके पास कितने काम</h2>
+  <div id="people"></div>
+</details>
+
+<p id="fEmpty" class="empty" hidden>इस फ़िल्टर में कोई काम नहीं है।</p>
+<div id="sections"></div>
+<datalist id="names"></datalist>
+
+<details class="panel move" id="move">
+  <summary>डेटा दूसरी जगह ले जाएँ</summary>
+  <p class="mhelp">पुरानी जगह (जैसे डाउनलोड की हुई फ़ाइल) में Copy data दबाएँ। फिर नए लिंक में यहीं नीचे वाले खाने में पेस्ट करके Import दबाएँ।</p>
+  <button type="button" class="btn ghost" id="exportBtn">Copy data</button>
+  <textarea id="exportBox" class="movebox" readonly hidden aria-label="कॉपी किया हुआ डेटा"></textarea>
+  <textarea id="importBox" class="movebox" placeholder="Paste data here" aria-label="डेटा पेस्ट करें"></textarea>
+  <button type="button" class="btn" id="importBtn">Import</button>
+  <p id="moveMsg" class="mhelp" role="status"></p>
+</details>
+
+<footer>
+  <button type="button" class="btn ghost" id="restore" hidden></button>
+  <button type="button" class="btn ghost" id="reset">Reset all</button>
+</footer>
+</main>
+
+<script>
+const DATA = [
+ {id:"program",menu:true,customKey:"program",title:"कार्यक्रम",desc:"पंडित जी की पर्ची के अनुसार सभी रस्में। बदलने के लिए Edit दबाएँ।",labels:["कार्यक्रम","तारीख और समय","नोट"],addLabel:"+ Add new program",events:[
+  {what:"गणेश जी निमंत्रण",when:"27 जनवरी बुधवार, प्रातः 7:15 (या 3 फ़रवरी बुधवार, प्रातः 7:15)",items:[["पहला कार्ड गणेश जी को"]]},
+  {what:"छोटा विनायक (सातधान) और लगन झेलना",when:"7 फ़रवरी रविवार, प्रातः 9:15",items:[]},
+  {what:"बड़ा विनायक",when:"10 फ़रवरी बुधवार, प्रातः 8:15",items:[]},
+  {what:"बासन",when:"10 फ़रवरी बुधवार, प्रातः 10:15",items:[]},
+  {what:"मेहंदी-हल्दी",when:"10 फ़रवरी बुधवार, अपने समय से",items:[]},
+  {what:"मायरा",when:"10 फ़रवरी बुधवार, सायं 5:15",items:[]},
+  {what:"महिला संगीत",when:"10 फ़रवरी बुधवार, रात्रि 7:15",items:[]},
+  {what:"धाम",when:"11 फ़रवरी गुरुवार, प्रातः 8:15",items:[]},
+  {what:"तोरण",when:"11 फ़रवरी गुरुवार, सायं 7:15",items:[["गोधूली बेला"]]},
+  {what:"फेरे",when:"11 फ़रवरी गुरुवार, रात्रि 11:15",items:[["तुला लग्न"]]}
+ ]},
+ {id:"book",title:"तुरंत बुक करें",desc:"नवंबर में ही — अबूझ सावे की वजह से देर करने पर कुछ नहीं मिलेगा",items:[
+  ["वाटिका — 10 और 11 फ़रवरी दोनों दिन के लिए","मायरा, संगीत और बारात की तैयारी यहीं से","urgent"],
+  ["केटरर्स / हलवाई — मायरा भोज, संगीत की रात, 11 की सुबह और बारात का खाना","मेन्यू, थाली की संख्या और रेट लिखित में","urgent"],
+  ["हलवाई के बर्तन","किराए पर — गिनती और टूट-फूट की शर्त लिखवा लें","urgent"],
+  ["फ़ूड स्टॉल","पानी पताशे, कॉर्न चाट, मंचूरियन, राब","urgent"],
+  ["टेंट, कुर्सियाँ, स्टेज","संगीत के लिए स्टेज और साउंड भी","urgent"],
+  ["लाइट डेकोरेशन — घर और वाटिका दोनों","","urgent"],
+  ["जनरेटर","बिजली जाने पर संगीत और फेरे न रुकें","urgent"],
+  ["बैंड-बाजा, लाइट वालों के साथ","निकासी से तोरण तक का समय बता दें","urgent"],
+  ["ढोल — 4","","urgent"],
+  ["ढोलन","विनायक, हल्दी, मायरा और संगीत के गीतों के लिए","urgent"],
+  ["घोड़ी (या बग्गी)","11 फ़रवरी शाम — तोरण 7:15 बजे है, निकासी उससे पहले","urgent"],
+  ["फोटोग्राफर + वीडियोग्राफर","10 और 11 दोनों दिन, सब रस्में कवर हों","urgent"],
+  ["DJ / ढोली — महिला संगीत के लिए","10 फ़रवरी रात 7:15 से","urgent"],
+  ["मेहंदी वाली — घरवालों के लिए","10 फ़रवरी — परिवार की महिलाओं की गिनती बता दें","urgent"],
+  ["घर पर खाना बनाने वाली / बर्तन वाली","9 से 12 फ़रवरी तक, मेहमानों के रहते","soon"],
+  ["नायन / नाई","रस्मों के लिए पहले से बोल दें","soon"],
+  ["कलश के लिए कुम्हार","कलश, दीये और मिट्टी के बर्तन का ऑर्डर","soon"],
+  ["गैस की टंकियाँ","हलवाई के लिए कमर्शियल सिलेंडर — गैस एजेंसी में पहले से बुक करें","soon"],
+  ["पानी के कैन","हर दिन की गिनती तय करें","soon"],
+  ["बाहर से आने वाले मेहमानों के लिए होटल / कमरे","9 से 12 फ़रवरी तक","urgent"],
+  ["टेंपो, वैन और दूल्हे की कार","सामान के लिए टेंपो, मेहमानों के लिए वैन, दूल्हे की सजी कार","urgent"],
+  ["रिश्तेदारों के ट्रेन / बस टिकट","फ़रवरी की टिकटें 60 दिन पहले खुलती हैं, तारीख नोट कर लें","urgent"],
+  ["पं. शिवचरण त्रिवेदी जी से सभी तारीखें दोबारा कन्फ़र्म","गणेश निमंत्रण की तारीख (27 जनवरी या 3 फ़रवरी) तय करें",""],
+  ["घर की पुताई और सफ़ाई","पेंटर और सफ़ाई वाले पहले से बुक करें","soon"]
+ ]},
+ {id:"card",title:"कार्ड और मेहमान",desc:"दिसंबर तक कार्ड छप जाएँ, गणेश निमंत्रण से पहले तैयार हों",items:[
+  ["मेहमानों की लिस्ट बनाएँ — परिवार, रिश्तेदार, दोस्त, मोहल्ला","कितने लोग रुकेंगे, यह अलग गिनें","soon"],
+  ["कार्ड का डिज़ाइन और प्रिंटिंग का ऑर्डर","कार्यक्रम पंडित जी वाली पर्ची से मिलाकर छपवाएँ","soon"],
+  ["व्हाट्सऐप वाला डिजिटल कार्ड भी बनवाएँ","",""],
+  ["पहला कार्ड गणेश जी को (गणेश निमंत्रण के दिन)","",""],
+  ["कार्ड बाँटना — शहर में खुद जाकर, बाहर डाक/व्हाट्सऐप से","जनवरी के पहले-दूसरे हफ़्ते तक",""],
+  ["मेहमानों के कमरों का बँटवारा (कौन कहाँ रुकेगा)","",""],
+  ["स्टेशन / बस स्टैंड से लाने-ले जाने का इंतज़ाम","एक व्यक्ति और गाड़ी तय करें",""],
+  ["हर काम के लिए परिवार में एक ज़िम्मेदार तय करें","खाना, मेहमान, पैसा, सामान, गाड़ियाँ",""],
+  ["हर दिन के खाने की गिनती — 10 और 11 फ़रवरी","अपने मेहमान और वधू पक्ष अलग-अलग गिनें, फिर हलवाई को बताएँ","soon"],
+  ["वधू पक्ष के कितने लोग आएँगे, पक्का करें","कौन-से दिन और किस समय पहुँचेंगे","soon"],
+  ["वधू पक्ष के ठहरने का इंतज़ाम (जनवासा)","कमरे, बिस्तर-रज़ाई, पानी, गरम पानी","soon"],
+  ["वधू पक्ष का स्वागत और उनके लिए एक ज़िम्मेदार व्यक्ति","स्टेशन या बस स्टैंड से लाना, चाय-नाश्ता, हर ज़रूरत",""]
+ ]},
+ {id:"kharid",title:"खरीदारी",desc:"दिसंबर–जनवरी में",items:[
+  ["दूल्हे की शेरवानी, साफा, मोजड़ी, कलगी, कटार/तलवार","फ़िटिंग के लिए समय रखें","soon"],
+  ["परिवार के पुरुषों के एक रंग के साफे","साफा बाँधने वाले को भी बुलाएँ",""],
+  ["वधू के लिए पड़ला / बरी — कपड़े, गहने, श्रृंगार","घर के बड़ों से अपने रिवाज़ की लिस्ट ले लें","soon"],
+  ["हर रस्म के कपड़े — मायरा, संगीत, हल्दी, शादी","",""],
+  ["नेग के लिफ़ाफ़े और बैंक से नए नोट","नए नोट के लिए पहले से बैंक में बोल दें",""],
+  ["मिठाई के डिब्बे / उपहार","लगन वालों, मायरे वालों और बारातियों के लिए",""],
+  ["पूजा सामग्री — विनायक, सातधान, हल्दी, मेहंदी के लिए","पंडित जी से पूरी लिस्ट लें",""],
+  ["सर्दी का इंतज़ाम — रज़ाई, कंबल, हीटर","फ़रवरी में भीलवाड़ा की रातें ठंडी होती हैं",""],
+  ["हल्दी का गिफ़्ट","किसे देना है और कितने चाहिए, नोट में लिखें","soon"],
+  ["गीत का गिफ़्ट","गीत गाने आई महिलाओं की गिनती के हिसाब से","soon"],
+  ["कलश का गिफ़्ट","किसे देना है और कितने चाहिए, नोट में लिखें","soon"],
+  ["मायरा का गिफ़्ट","मायरा लाने वाले निनहाल पक्ष के लिए","soon"],
+  ["बधाई का गिफ़्ट","किसे देना है और कितने चाहिए, नोट में लिखें","soon"],
+  ["शर्टिंग","कितने पीस और किसके लिए, नोट में लिखें","soon"],
+  ["सूटिंग","कितने पीस और किसके लिए, नोट में लिखें","soon"],
+  ["साड़ियाँ","कितनी और किसके लिए, नोट में लिखें","soon"],
+  ["तोरण का सामान","तोरण मारने के लिए जो चाहिए, घर के बड़ों से लिस्ट लें","soon"],
+  ["सोने के गहने","किसके लिए, क्या-क्या और बजट नोट में लिखें; हॉलमार्क (HUID) देखकर लें और पक्का बिल लें","soon"],
+  ["बासन रस्म का सामान","घर की बड़ी महिलाओं से लिस्ट ले लें","soon"],
+  ["हल्दी रस्म का सामान, पीले कपड़े और ढोलक","",""],
+  ["इमरजेंसी किट","दवाइयाँ, सुई-धागा, सेफ़्टी पिन, चार्जर, छाते",""]
+ ]},
+ {id:"dance",title:"संगीत के डांस",desc:"10 फ़रवरी रात 7:15, महिला संगीत",addPrefix:"डांस",items:[
+  ["गानों की लिस्ट","",""],
+  ["डांस: लकी और श्रुति","गाना और प्रैक्टिस का समय नोट में लिखें",""],
+  ["डांस: सोमेश और पूजा","गाना और प्रैक्टिस का समय नोट में लिखें",""],
+  ["डांस: डिंपल और लोकेशजी","गाना और प्रैक्टिस का समय नोट में लिखें",""],
+  ["डांस: मामाजी और मामीजी","गाना और प्रैक्टिस का समय नोट में लिखें",""],
+  ["डांस: कज़िन ग्रुप","ग्रुप में कौन-कौन है, गाना और प्रैक्टिस का समय नोट में लिखें",""]
+ ]},
+ {id:"khana",menu:true,title:"खाने का मेन्यू",desc:"किस खाने में क्या बन रहा है। बदलने के लिए Edit दबाएँ।",events:[
+  {when:"10 फ़रवरी सुबह",what:"नाश्ता",items:[["पोहा",""],["नमकीन",""],["चाय",""],["दाल पकवान","लिस्ट में 'इसी समय' लिखा है"]]},
+  {when:"11 फ़रवरी सुबह",what:"नाश्ता",items:[["उपमा",""],["जलेबी",""],["अचार",""],["आलूबड़ा",""],["चाय-कॉफ़ी",""]]},
+  {when:"10 फ़रवरी",what:"दोपहर का खाना",items:[["आलू टमाटर की सब्ज़ी",""],["पूरी",""],["मिर्च टमाटर",""],["नमकीन",""]]},
+  {when:"10 फ़रवरी रात, महिला संगीत",what:"संगीत का खाना",items:[["मीठे चावल",""],["आलू छोले",""],["पूरी",""],["कचौरी",""],["सूप",""],["पानी पताशे",""],["चाऊमीन",""],["दही चाट",""]]},
+  {when:"11 फ़रवरी सुबह",what:"धाम",items:[["बाफला बाटी",""],["दाल",""],["कढ़ी",""],["बेसन गट्टे",""],["लहसुन चटनी",""],["चूरमा",""],["सलाद, छाछ, पापड़",""]]},
+  {when:"11 फ़रवरी",what:"शादी का खाना",items:[["मटर पनीर",""],["दाल",""],["मिक्स वेज",""],["पकौड़ी",""],["वेज पुलाव",""],["पूरी, चपाती, तंदूरी रोटी",""]]},
+  {when:"11 फ़रवरी",what:"स्टॉल",items:[["कॉर्न चाट",""],["पानी पताशे",""],["राब",""],["मंचूरियन",""]]},
+  {when:"11 फ़रवरी, बजट हो तो",what:"ऑप्शनल स्टॉल",items:[["पनीर चीला",""],["डोसा",""],["खमण",""]]},
+  {when:"",what:"मिठाई",items:[["गाजर हलवा / मूंग दाल हलवा",""],["मालपुआ",""],["घेवर रबड़ी",""],["बड़े गुलाब जामुन",""],["काला जामुन",""]]}
+ ],items:[]}
+];
+const KEY="somesh-shaadi-v1";
+let state={checked:{},custom:{},who:{},note:{},edits:{},hidden:{}};
+try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}
+["checked","custom","who","note","edits","hidden"].forEach(k=>{if(!state[k]||typeof state[k]!=="object")state[k]={};});
+if(state.custom["ev-rasme-6"]){state.custom.dance=(state.custom.dance||[]).concat(state.custom["ev-rasme-6"]);delete state.custom["ev-rasme-6"];}
+for(let i=0;i<6;i++){const o=`rasme-6-${i}`,n=`dance-${i}`;["checked","who","note","edits","hidden"].forEach(k=>{if(state[k][o]!==undefined&&state[k][n]===undefined)state[k][n]=state[k][o];delete state[k][o];});}
+const openSet=new Set();
+const saveLocal=()=>{try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}};
+const save=()=>{saveLocal();scheduleSync();};
+
+/* ---- Google Sheet sync ---- */
+const SHEET_URL="https://script.google.com/macros/s/AKfycbydfMhfuLyy5KRzu7_FFhCkG0WrwzALWOHd6v_rX-dtIcfqavIk8zGQ0nkuLoumtiLDiA/exec"; // <-- यहाँ Apps Script का Web app URL डालें (" " के बीच)
+let db=null,ready=false,readOnly=false,syncTimer=null,syncPending=false,pendingRender=false,offline=false,badCode=false,started=false;
+let synced={items:{},custom:{}};
+let remote={items:null,custom:null};
+let chain=Promise.resolve(),inflight=0;
+let code=(()=>{try{return localStorage.getItem(KEY+"-code")||"";}catch(e){return "";}})();
+function itemIds(){const s=new Set();["checked","who","note","edits","hidden"].forEach(k=>Object.keys(state[k]).forEach(i=>s.add(i)));return s;}
+function itemBody(id){return {c:!!state.checked[id],w:state.who[id]||"",n:state.note[id]||"",e:state.edits[id]===undefined?null:state.edits[id],h:!!state.hidden[id]};}
+function customMap(){const m={};Object.keys(state.custom).forEach(sec=>(state.custom[sec]||[]).forEach(c=>{m[c.id]=Object.assign({sec},c);}));return m;}
+function scheduleSync(){if(!db||!ready)return;syncPending=true;clearTimeout(syncTimer);syncTimer=setTimeout(sync,600);}
+function sync(){
+  syncPending=false;
+  if(!db||!ready)return;
+  const ops=[],ids=itemIds();
+  ids.forEach(id=>{const b=itemBody(id),j=JSON.stringify(b);if(synced.items[id]!==j){synced.items[id]=j;ops.push({k:"items",id,b});}});
+  Object.keys(synced.items).forEach(id=>{if(!ids.has(id)){delete synced.items[id];ops.push({k:"items",id,b:null});}});
+  const cm=customMap();
+  Object.keys(cm).forEach(id=>{const j=JSON.stringify(cm[id]);if(synced.custom[id]!==j){synced.custom[id]=j;ops.push({k:"custom",id,b:cm[id]});}});
+  Object.keys(synced.custom).forEach(id=>{if(!cm[id]){delete synced.custom[id];ops.push({k:"custom",id,b:null});}});
+  if(!ops.length)return;
+  inflight++;
+  chain=chain.then(()=>fetch(SHEET_URL,{method:"POST",body:JSON.stringify({code,ops})}).then(r=>r.json()).then(j=>{
+      if(!j.ok){if(j.error==="code"){badCode=true;db=null;}throw new Error(j.error||"fail");}
+      offline=false;setStatus();
+    })).catch(()=>{
+      ops.forEach(o=>{if(o.b===null)synced[o.k][o.id]="retry";else delete synced[o.k][o.id];});
+      if(db){offline=true;setStatus();setTimeout(scheduleSync,10000);}else setStatus();
+    }).finally(()=>{inflight--;});
+}
+function dirtyItems(){const d=new Set();itemIds().forEach(id=>{if(synced.items[id]!==JSON.stringify(itemBody(id)))d.add(id);});return d;}
+function applyRemote(){
+  if(!remote.items||!remote.custom)return;
+  let first=false;
+  if(!ready){
+    ready=true;first=true;
+    if(remote.items.empty&&remote.custom.empty){setStatus();sync();return;} // पहली बार: इस फ़ोन का डेटा Sheet में भेजें
+  }
+  const keep=first?new Set():dirtyItems(),local={};keep.forEach(id=>local[id]=itemBody(id));
+  const ns={checked:{},custom:{},who:{},note:{},edits:{},hidden:{}};
+  synced={items:{},custom:{}};
+  remote.items.docs.forEach(d=>{const b=d.data();if(!b)return;synced.items[d.id]=JSON.stringify({c:!!b.c,w:b.w||"",n:b.n||"",e:b.e===undefined?null:b.e,h:!!b.h});
+    const v=local[d.id]||b;if(v.c)ns.checked[d.id]=true;if(v.w)ns.who[d.id]=v.w;if(v.n)ns.note[d.id]=v.n;if(v.e!==null&&v.e!==undefined)ns.edits[d.id]=v.e;if(v.h)ns.hidden[d.id]=true;});
+  remote.custom.docs.forEach(d=>{const b=d.data();if(!b)return;synced.custom[d.id]=JSON.stringify(b);const c=Object.assign({},b);const sec=c.sec;delete c.sec;(ns.custom[sec]=ns.custom[sec]||[]).push(c);});
+  Object.keys(ns.custom).forEach(k=>ns.custom[k].sort((a,b)=>String(a.id).localeCompare(String(b.id))));
+  const changed=JSON.stringify(ns)!==JSON.stringify(state);
+  state=ns;saveLocal();setStatus();
+  if(keep.size)scheduleSync();
+  if(changed)safeRender();
+}
+function editing(){const a=document.activeElement;return a&&$("sections").contains(a)&&(a.tagName==="INPUT"&&a.type==="text"||a.tagName==="TEXTAREA");}
+function safeRender(){if(editing()){pendingRender=true;return;}pendingRender=false;render();}
+document.addEventListener("focusout",()=>setTimeout(()=>{if(pendingRender&&!editing())safeRender();},50));
+function setStatus(){
+  const s=$("sync");if(!s)return;
+  $("codeBox").hidden=!(SHEET_URL&&badCode);
+  let t,cls="sync";
+  if(!SHEET_URL)t="Google Sheet अभी जुड़ी नहीं है, लिस्ट इसी फ़ोन में सेव हो रही है";
+  else if(badCode){t=code?"फ़ैमिली कोड गलत है, सही कोड डालें":"लिस्ट खोलने के लिए फ़ैमिली कोड डालें";cls+=" off";}
+  else if(offline){t="इंटरनेट नहीं मिल रहा, बदलाव इसी फ़ोन में सेव हैं और बाद में Sheet में चले जाएँगे";cls+=" off";}
+  else if(ready){t="Google Sheet से जुड़ी लिस्ट: बदलाव सबको दिखते हैं";cls+=" on";}
+  else t="Sheet से जुड़ रहा है…";
+  s.textContent=t;s.className=cls;
+}
+async function load(){
+  if(!db||inflight||syncPending)return;
+  try{
+    const r=await fetch(SHEET_URL+"?code="+encodeURIComponent(code)+"&t="+Date.now());
+    const j=await r.json();
+    if(!j.ok){if(j.error==="code"){badCode=true;db=null;setStatus();}return;}
+    if(inflight||syncPending)return;
+    const snap=o=>{const docs=Object.keys(o||{}).map(id=>({id,data:()=>o[id]}));return {docs,empty:!docs.length};};
+    remote.items=snap(j.items);remote.custom=snap(j.custom);offline=false;applyRemote();
+  }catch(e){offline=true;setStatus();}
+}
+function connect(){
+  if(!SHEET_URL){setStatus();return;}
+  if(!code){badCode=true;setStatus();return;}
+  db={};badCode=false;setStatus();load();
+  if(!started){started=true;
+    setInterval(()=>{if(!document.hidden)load();},15000);
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)load();});
+  }
+}
+const PHONE=/(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}/g;
+let tab="all";
+const $=id=>document.getElementById(id);
+function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+function btn(cls,text){const b=el("button",cls,text);b.type="button";return b;}
+function twoTap(b,label,confirmLabel,onConfirm){
+  let arm=null;
+  b.onclick=()=>{
+    if(!arm){b.textContent=confirmLabel;b.classList.add("armed");arm=setTimeout(()=>{arm=null;b.textContent=label;b.classList.remove("armed");},3500);return;}
+    clearTimeout(arm);arm=null;b.textContent=label;b.classList.remove("armed");onConfirm();
+  };
+}
+
+function itemEl(id,text,sub,tag){
+  if(state.hidden[id])return document.createComment("");
+  if(state.edits[id])text=state.edits[id];
+  const li=el("li","item");li.dataset.id=id;li.dataset.tag=tag||"";
+  const row=el("div","irow");
+  const cb=document.createElement("input");cb.type="checkbox";cb.className="cb";cb.checked=!!state.checked[id];cb.setAttribute("aria-label",text);
+  const head=btn("ihead");head.setAttribute("aria-expanded","false");
+  const t=el("span","t",text);head.appendChild(t);
+  if(sub)head.appendChild(el("span","sub",sub));
+  const chips=el("span","chips");head.appendChild(chips);
+  const chev=el("span","chev");chev.setAttribute("aria-hidden","true");head.appendChild(chev);
+  row.append(cb,head);li.appendChild(row);
+  const paintChips=()=>{
+    chips.innerHTML="";
+    if(tag)chips.appendChild(el("span","tag "+tag,tag==="urgent"?"तुरंत":"जल्दी"));
+    const wv=(state.who[id]||"").trim();if(wv)chips.appendChild(el("span","chip who",wv));
+    if((state.note[id]||"").trim())chips.appendChild(el("span","chip","Note"));
+    chips.hidden=!chips.childElementCount;
+  };
+  paintChips();
+  li.classList.toggle("done",cb.checked);
+  cb.onchange=()=>{state.checked[id]=cb.checked;li.classList.toggle("done",cb.checked);save();update();applyFilter();};
+
+  const det=el("div","idetail");det.hidden=true;li.appendChild(det);
+  const whoL=el("label","fld");whoL.appendChild(el("span","flab","ज़िम्मेदार"));
+  const w=document.createElement("input");w.type="text";w.placeholder="नाम लिखें";w.setAttribute("list","names");w.value=state.who[id]||"";
+  w.oninput=()=>{state.who[id]=w.value;save();paintChips();};
+  w.onchange=()=>{names();applyFilter();};
+  whoL.appendChild(w);
+  const noteL=el("label","fld");noteL.appendChild(el("span","flab","संपर्क और नोट"));
+  const ta=document.createElement("textarea");ta.rows=2;ta.placeholder="नाम, फ़ोन नंबर, रेट, एडवांस, पता";ta.value=state.note[id]||"";
+  noteL.appendChild(ta);
+  const calls=el("div","calls");
+  const er=el("div","editrow");er.hidden=true;
+  const ei=document.createElement("input");ei.type="text";ei.setAttribute("aria-label","Item name");
+  const es=btn("btn","Save"),ec=btn("btn ghost","Cancel");er.append(ei,es,ec);
+  const acts=el("div","acts");const eb=btn("link","Edit"),db=btn("link danger","Delete");acts.append(eb,db);
+  det.append(whoL,noteL,calls,er,acts);
+
+  const fit=()=>{ta.style.height="auto";ta.style.height=ta.scrollHeight+"px";};
+  const showCalls=()=>{calls.innerHTML="";(ta.value.match(PHONE)||[]).forEach(n=>{const a=el("a",null,"Call "+n.trim());a.href="tel:"+n.replace(/[\s-]/g,"");calls.appendChild(a);});};
+  ta.oninput=()=>{state.note[id]=ta.value;save();fit();showCalls();paintChips();};
+  showCalls();
+  const setOpenItem=o=>{det.hidden=!o;head.setAttribute("aria-expanded",o);li.classList.toggle("open",o);if(o){openSet.add(id);requestAnimationFrame(fit);}else openSet.delete(id);};
+  head.onclick=()=>setOpenItem(det.hidden);
+  if(openSet.has(id))setOpenItem(true);
+
+  const closeEdit=()=>{er.hidden=true;acts.hidden=false;eb.focus();};
+  eb.onclick=()=>{er.hidden=false;acts.hidden=true;ei.value=t.textContent;ei.focus();ei.select();};
+  const doSave=()=>{const v=ei.value.trim();if(!v)return;state.edits[id]=v;t.textContent=v;cb.setAttribute("aria-label",v);save();closeEdit();};
+  es.onclick=doSave;ec.onclick=closeEdit;
+  ei.onkeydown=e=>{if(e.key==="Enter")doSave();if(e.key==="Escape")closeEdit();};
+  twoTap(db,"Delete","Confirm delete?",()=>{
+    state.hidden[id]=true;save();
+    const ev=li.closest(".event");li.remove();if(ev&&!ev.querySelector("li"))ev.remove();
+    update();names();applyFilter();restoreBtn();
+  });
+  return li;
+}
+
+function mealEl(m,sec){
+  const L=sec.labels||["खाना","कब","क्या-क्या बनेगा (कॉमा से अलग करें)"];
+  const o=state.edits[m.id];const v=Object.assign({},m,(o&&typeof o==="object")?o:{});
+  const r=el("div","mrow");
+  const l=el("div","mname");l.append(el("b",null,v.what),el("small",null,v.when));
+  const eb=btn("link mlink","Edit");eb.setAttribute("aria-label","Edit: "+v.what);
+  r.append(l,el("p",null,v.dishes||(sec.labels?"":"अभी कुछ नहीं लिखा")),eb);
+  eb.onclick=()=>{
+    const f=el("div","mform");
+    const mk=(lab,val,tag)=>{const L=el("label","fld");L.appendChild(el("span","flab",lab));const i=document.createElement(tag);if(tag==="input")i.type="text";i.value=val||"";L.appendChild(i);return [L,i];};
+    const [l1,i1]=mk(L[0],v.what,"input"),[l2,i2]=mk(L[1],v.when,"input"),[l3,i3]=mk(L[2],v.dishes,"textarea");
+    i3.rows=3;
+    const acts=el("div","acts");const sb=btn("btn","Save"),cb=btn("btn ghost","Cancel"),db=btn("link danger","Delete");acts.append(sb,cb,db);
+    f.append(l1,l2,l3,acts);r.replaceWith(f);
+    const fit=()=>{i3.style.height="auto";i3.style.height=i3.scrollHeight+"px";};i3.oninput=fit;requestAnimationFrame(fit);
+    i3.focus();
+    sb.onclick=()=>{state.edits[m.id]={what:i1.value.trim()||L[0],when:i2.value.trim(),dishes:i3.value.trim()};save();f.replaceWith(mealEl(m,sec));};
+    cb.onclick=()=>f.replaceWith(mealEl(m,sec));
+    twoTap(db,"Delete","Confirm delete?",()=>{state.hidden[m.id]=true;save();f.remove();restoreBtn();});
+  };
+  return r;
+}
+
+function render(){
+  const tabs=$("tabs"),box=$("sections");
+  tabs.innerHTML="";box.innerHTML="";
+  [{id:"all",title:"सभी"},...DATA].forEach(sec=>{
+    const b=btn("tab",sec.title);b.setAttribute("role","tab");b.dataset.tab=sec.id;
+    b.setAttribute("aria-selected",tab===sec.id);
+    if(sec.id!=="all"&&!sec.menu)b.appendChild(el("small","tcount",""));
+    b.onclick=()=>{tab=sec.id;tabs.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.tab===tab));applyFilter();window.scrollTo({top:$("sections").offsetTop-70});};
+    tabs.appendChild(b);
+  });
+  DATA.forEach(sec=>{
+    const s=el("section");s.id=sec.id;
+    const hd=el("div","shead");hd.append(el("h2",null,sec.title),el("span","scount",""));s.appendChild(hd);
+    if(sec.desc)s.appendChild(el("p","sdesc",sec.desc));
+    if(sec.menu){
+      const ck=sec.customKey||"menu";
+      const meals=sec.events.map((ev,ei)=>({id:`${sec.id}-m${ei}`,what:ev.what,when:ev.when,dishes:ev.items.map(i=>i[0]).join(", ")}))
+        .concat(state.custom[ck]||[]);
+      meals.forEach(m=>{if(!state.hidden[m.id])s.appendChild(mealEl(m,sec));});
+      const ab=btn("btn ghost madd",sec.addLabel||"+ Add new meal");
+      ab.onclick=()=>{(state.custom[ck]=state.custom[ck]||[]).push({id:"m"+Date.now(),what:(sec.labels?"नया कार्यक्रम":"नया खाना"),when:"",dishes:""});save();render();
+        const rows=document.querySelectorAll("#"+sec.id+" .mrow");const last=rows[rows.length-1];if(last)last.querySelector(".mlink").click();};
+      s.appendChild(ab);
+      box.appendChild(s);return;
+    }
+    if(sec.events){
+      sec.events.forEach((ev,ei)=>{
+        const d=el("div","event");const h=el("div","ehead");h.append(el("b",null,ev.what),el("span",null,ev.when));d.appendChild(h);
+        const ul=el("ul");ev.items.forEach((it,ii)=>ul.appendChild(itemEl(`${sec.id}-${ei}-${ii}`,it[0],it[1],"")));
+        const ek=`ev-${sec.id}-${ei}`;
+        (state.custom[ek]||[]).forEach(c=>ul.appendChild(itemEl(c.id,c.text,"","")));
+        d.appendChild(ul);
+        if(ev.addable){
+          const f=el("div","add eadd");
+          const inp=document.createElement("input");inp.type="text";inp.placeholder="Add new dance (e.g. भाभी और दीदी)";inp.setAttribute("aria-label",ev.what+" में नया "+ev.addable);
+          const ab=btn("btn","Add");f.append(inp,ab);
+          const add=()=>{let v=inp.value.trim();if(!v)return;if(!v.startsWith(ev.addable))v=ev.addable+": "+v;
+            (state.custom[ek]=state.custom[ek]||[]).push({id:"c"+Date.now(),text:v});save();render();
+            const ni=document.querySelector(`[data-ek="${ek}"] input`);if(ni)ni.focus();};
+          f.dataset.ek=ek;ab.onclick=add;inp.onkeydown=e=>{if(e.key==="Enter")add();};
+          d.appendChild(f);
+        }
+        s.appendChild(d);
+      });
+    }
+    const ul=el("ul");
+    (sec.items||[]).forEach((it,i)=>ul.appendChild(itemEl(`${sec.id}-${i}`,it[0],it[1],it[2])));
+    (state.custom[sec.id]||[]).forEach(c=>ul.appendChild(itemEl(c.id,c.text,"","")));
+    s.appendChild(ul);
+    const f=el("div","add");
+    const inp=document.createElement("input");inp.type="text";inp.placeholder=sec.addPrefix?"Add new dance (e.g. भाभी और दीदी)":"Add new item";inp.setAttribute("aria-label",sec.title+" में नया काम");
+    const ab=btn("btn","Add");f.append(inp,ab);
+    const add=()=>{let v=inp.value.trim();if(!v)return;if(sec.addPrefix&&!v.startsWith(sec.addPrefix))v=sec.addPrefix+": "+v;(state.custom[sec.id]=state.custom[sec.id]||[]).push({id:"c"+Date.now(),text:v});save();render();
+      const ni=document.querySelector(`#${sec.id} > .add input`);if(ni)ni.focus();};
+    ab.onclick=add;inp.onkeydown=e=>{if(e.key==="Enter")add();};
+    s.appendChild(f);box.appendChild(s);
+  });
+  update();names();applyFilter();restoreBtn();
+}
+
+function update(){
+  let tot=0,done=0;
+  document.querySelectorAll("#sections section").forEach(s=>{
+    const cbs=s.querySelectorAll(".cb");const d=[...cbs].filter(c=>c.checked).length;
+    tot+=cbs.length;done+=d;
+    s.querySelector(".scount").textContent=cbs.length?`${d} / ${cbs.length} पूरे`:"";
+    const tc=document.querySelector(`.tab[data-tab="${s.id}"] .tcount`);if(tc)tc.textContent=`${d}/${cbs.length}`;
+  });
+  const urg=[...document.querySelectorAll('#sections li[data-tag="urgent"]')].filter(li=>!state.checked[li.dataset.id]).length;
+  $("pbar").style.width=(tot?done/tot*100:0)+"%";
+  $("sDone").textContent=`${done}/${tot}`;
+  $("sUrg").textContent=urg;
+}
+
+function names(){
+  const u=[...new Set(Object.values(state.who).map(v=>(v||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"hi"));
+  const dl=$("names");dl.innerHTML="";u.forEach(n=>{const o=el("option");o.value=n;dl.appendChild(o);});
+  const sel=$("fWho"),cur=sel.value||"all";sel.innerHTML="";
+  [["all","सभी"],["none","जिसे कोई नहीं दिया"],...u.map(n=>[n,n])].forEach(([v,l])=>{const o=el("option",null,l);o.value=v;sel.appendChild(o);});
+  sel.value=[...sel.options].some(o=>o.value===cur)?cur:"all";
+}
+
+function applyFilter(){
+  const fw=$("fWho").value,fs=$("fStatus").value,ft=$("fTag").value;
+  const on=fw!=="all"||fs!=="all"||ft!=="all";
+  let any=0;
+  document.querySelectorAll("#sections li").forEach(li=>{
+    const id=li.dataset.id,who=(state.who[id]||"").trim(),done=!!state.checked[id],tg=li.dataset.tag;
+    let ok=true;
+    if(fw==="none")ok=!who;else if(fw!=="all")ok=who===fw;
+    if(ok&&fs==="todo")ok=!done;
+    if(ok&&fs==="done")ok=done;
+    if(ok&&ft==="urgent")ok=tg==="urgent";
+    if(ok&&ft==="soon")ok=tg==="urgent"||tg==="soon";
+    li.classList.toggle("hide",!ok);
+    if(ok&&(tab==="all"||li.closest("section").id===tab))any++;
+  });
+  document.querySelectorAll("#sections .event").forEach(e=>e.classList.toggle("hide",on&&!e.querySelector("li:not(.hide)")));
+  document.querySelectorAll("#sections section").forEach(s=>{
+    const inTab=tab==="all"||tab===s.id;
+    const isMenu=!s.querySelector(".cb");
+    s.classList.toggle("hide",!inTab||(on&&(isMenu||!s.querySelector("li:not(.hide)"))));
+    const a=s.querySelectorAll(".add");a.forEach(x=>x.classList.toggle("hide",on));
+  });
+  const menuOnly=tab!=="all"&&DATA.find(d=>d.id===tab&&d.menu);
+  $("fEmpty").hidden=any>0||(menuOnly&&!on);
+  $("fClear").hidden=!on;
+  people();
+}
+
+function people(){
+  const box=$("people");
+  const map={};let none=0,noneLeft=0;
+  document.querySelectorAll("#sections li").forEach(li=>{
+    const id=li.dataset.id,w=(state.who[id]||"").trim(),d=!!state.checked[id];
+    if(!w){none++;if(!d)noneLeft++;return;}
+    (map[w]=map[w]||{t:0,l:0}).t++;if(!d)map[w].l++;
+  });
+  const cur=$("fWho").value;
+  box.innerHTML="";
+  const ppl=Object.keys(map).sort((a,b)=>a.localeCompare(b,"hi"));
+  if(!ppl.length){box.appendChild(el("p","pempty","किसी काम में ज़िम्मेदार का नाम लिखेंगे तो यहाँ हर व्यक्ति के काम दिखेंगे।"));return;}
+  const pick=v=>{$("fWho").value=cur===v?"all":v;applyFilter();};
+  ppl.forEach(n=>{
+    const c=map[n];
+    const wrap=el("span","pwrap"+(cur===n?" on":""));
+    const b=btn("pchip");b.append(el("b",null,n),el("span",null,`${c.l} बाकी, कुल ${c.t}`));
+    b.setAttribute("aria-pressed",cur===n);b.onclick=()=>pick(n);
+    const pe=btn("pedit","Edit");pe.setAttribute("aria-label","Edit name: "+n);
+    pe.onclick=()=>{
+      const r=el("span","prename");
+      const inp=document.createElement("input");inp.type="text";inp.value=n;inp.setAttribute("aria-label","नया नाम");
+      const ok=btn("btn","Save"),no=btn("btn ghost","Cancel");
+      r.append(inp,ok,no,el("small",null,"नया नाम इनके सभी कामों में बदल जाएगा। खाली छोड़कर सेव करेंगे तो यह नाम सभी कामों से हट जाएगा।"));
+      wrap.replaceWith(r);inp.focus();inp.select();
+      const doIt=()=>{
+        const nv=inp.value.trim(),sel=$("fWho").value===n;
+        Object.keys(state.who).forEach(k=>{if((state.who[k]||"").trim()===n)state.who[k]=nv;});
+        save();render();
+        if(sel&&nv){$("fWho").value=nv;applyFilter();}
+      };
+      ok.onclick=doIt;no.onclick=people;
+      inp.onkeydown=e=>{if(e.key==="Enter")doIt();if(e.key==="Escape")people();};
+    };
+    wrap.append(b,pe);box.appendChild(wrap);
+  });
+  const nb=btn("pnone"+(cur==="none"?" on":""));nb.append(el("b",null,"बिना नाम वाले"),el("span",null,` ${noneLeft} बाकी, कुल ${none}`));
+  nb.setAttribute("aria-pressed",cur==="none");nb.onclick=()=>pick("none");
+  box.appendChild(nb);
+}
+
+function restoreBtn(){
+  const n=Object.keys(state.hidden).length,b=$("restore");
+  b.hidden=!n;b.textContent=`Restore ${n} deleted item${n>1?"s":""}`;
+}
+
+(function(){
+  const wed=new Date(2027,1,11),now=new Date();now.setHours(0,0,0,0);
+  const d=Math.round((wed-now)/864e5);
+  $("sDays").textContent=d>0?d:"0";
+  $("sDaysL").textContent=d>0?"दिन बाकी":(d===0?"आज शादी है":"शादी हो गई");
+})();
+
+["fWho","fStatus","fTag"].forEach(i=>$(i).onchange=applyFilter);
+$("fClear").onclick=()=>{["fWho","fStatus","fTag"].forEach(i=>$(i).value="all");applyFilter();};
+$("restore").onclick=()=>{state.hidden={};save();render();};
+twoTap($("reset"),"Reset all","Confirm? This clears all ticks, names and notes",()=>{
+  state={checked:{},custom:{},who:{},note:{},edits:{},hidden:{}};save();render();
+});
+if(matchMedia("(min-width:601px)").matches)$("fpanel").open=true;
+render();
+$("exportBtn").onclick=async()=>{
+  const box=$("exportBox");box.value=JSON.stringify(state);box.hidden=false;box.focus();box.select();
+  let ok=false;try{await navigator.clipboard.writeText(box.value);ok=true;}catch(e){}
+  $("moveMsg").textContent=ok?"डेटा कॉपी हो गया। अब नया लिंक खोलकर वहाँ पेस्ट करें।":"ऊपर वाले खाने का पूरा टेक्स्ट कॉपी कर लें।";
+};
+$("importBtn").onclick=()=>{
+  let d;try{d=JSON.parse($("importBox").value.trim());}catch(e){d=null;}
+  if(!d||typeof d!=="object"||!d.checked){$("moveMsg").textContent="यह डेटा सही नहीं है। Copy data से पूरा टेक्स्ट कॉपी करके पेस्ट करें।";return;}
+  ["checked","who","note","edits","hidden"].forEach(k=>{if(d[k]&&typeof d[k]==="object")Object.assign(state[k],d[k]);});
+  if(d.custom&&typeof d.custom==="object")Object.keys(d.custom).forEach(sec=>{
+    const have=new Set((state.custom[sec]||[]).map(c=>c.id));
+    (d.custom[sec]||[]).forEach(c=>{if(c&&c.id&&!have.has(c.id))(state.custom[sec]=state.custom[sec]||[]).push(c);});
+  });
+  save();render();$("importBox").value="";
+  $("moveMsg").textContent=db&&ready?"डेटा आ गया और सबके साथ जुड़ गया।":"डेटा आ गया।";
+};
+$("codeBtn").onclick=()=>{
+  const v=$("codeIn").value.trim();if(!v)return;
+  code=v;try{localStorage.setItem(KEY+"-code",v);}catch(e){}
+  ready=false;synced={items:{},custom:{}};remote={items:null,custom:null};connect();
+};
+$("codeIn").onkeydown=e=>{if(e.key==="Enter")$("codeBtn").click();};
+connect();
+</script>
+</body>
+</html>
