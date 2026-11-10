@@ -6,7 +6,7 @@
 <title>सोमेश की शादी – चेकलिस्ट</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F2F3F5;--surface:#FFFFFF;--ink:#1C2230;--muted:#5D6574;--line:#E1E4E9;
@@ -222,23 +222,132 @@ details.panel[open]>summary{margin-bottom:10px}
 .move>*:not(summary){margin:8px 0 0}
 .mhelp{font-size:.88rem;color:var(--muted);margin:6px 0 0}
 .movebox{display:block;width:100%;min-height:80px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:16px;color:var(--ink)}
+
+/* ===== wedding theme ===== */
+:root{--bg:#FBF5EC;--surface:#FFFDF8;--ink:#2A1418;--muted:#7A6260;--line:#EBDDC7;--accent:#8E1B2C;--accent-soft:#F8E8E4;--gold:#B8862B;--gold-soft:#F7E9C6;--ok:#3D7A4A;--urgent:#B3261E;--urgent-soft:#FBE7E4;--soon:#9A5A06;--soon-soft:#FBEFD9;--hero1:#7A1426;--hero2:#4E0B19;--on-hero:#FFF5E6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#160B0E;--surface:#221318;--ink:#F6EADB;--muted:#C2AA9B;--line:#3E282D;--accent:#EBA3AC;--accent-soft:#3B1D24;--gold:#E3B861;--gold-soft:#3A2D17;--ok:#7CC48E;--urgent:#F4938A;--urgent-soft:#3B2321;--soon:#F0B562;--soon-soft:#392D1B;--hero1:#5C0F1D;--hero2:#2E0710;--on-hero:#FFF1DE}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#160B0E;--surface:#221318;--ink:#F6EADB;--muted:#C2AA9B;--line:#3E282D;--accent:#EBA3AC;--accent-soft:#3B1D24;--gold:#E3B861;--gold-soft:#3A2D17;--ok:#7CC48E;--urgent:#F4938A;--urgent-soft:#3B2321;--soon:#F0B562;--soon-soft:#392D1B;--hero1:#5C0F1D;--hero2:#2E0710;--on-hero:#FFF1DE}
+body{background:var(--bg);background-image:radial-gradient(circle at 1px 1px,color-mix(in srgb,var(--gold) 18%,transparent) 1px,transparent 0);background-size:22px 22px}
+.serif,.names,.shead h2,.kicker,.shri{font-family:"Tiro Devanagari Hindi","Mukta",serif}
+.garland{height:30px;margin:-2px -2px 4px;background:
+  radial-gradient(circle at 50% 0,#F59E0B 0 7px,#D97706 7px 9px,transparent 9.5px) 0 0/26px 22px repeat-x,
+  radial-gradient(circle at 50% 100%,#2F6B33 0 5px,transparent 5.5px) 13px 12px/26px 18px repeat-x;
+  -webkit-mask:linear-gradient(#000,#000);opacity:.95}
+.hero{position:relative;overflow:hidden;text-align:center;color:var(--on-hero);border-radius:18px;padding:0 18px 18px;
+  background:radial-gradient(120% 80% at 50% -10%,color-mix(in srgb,var(--gold) 35%,transparent),transparent 60%),linear-gradient(160deg,var(--hero1),var(--hero2));
+  box-shadow:0 10px 30px -12px rgba(78,11,25,.55);border:1px solid color-mix(in srgb,var(--gold) 55%,transparent)}
+.hero::after{content:"";position:absolute;inset:8px;border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:12px;pointer-events:none}
+.shri{margin:6px 0 0;font-size:.95rem;color:#F3D48A;letter-spacing:.02em}
+.kicker{margin:2px 0 0;font-size:.85rem;color:color-mix(in srgb,var(--on-hero) 75%,transparent);letter-spacing:.08em}
+.names{margin:6px 0 2px;font-weight:400;font-size:clamp(2rem,8vw,2.9rem);line-height:1.15;display:flex;justify-content:center;align-items:baseline;gap:.35em;flex-wrap:wrap}
+.names em{font-style:italic;font-size:.5em;color:#F3D48A}
+.when{margin:0;font-size:.92rem;color:color-mix(in srgb,var(--on-hero) 85%,transparent)}
+.hero .stats{position:relative;z-index:1;margin:16px 0 12px}
+.hero .stat{background:rgba(255,245,230,.08);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:12px;text-align:center;backdrop-filter:blur(2px)}
+.hero .stat b{color:#FBE3A6;font-family:"Tiro Devanagari Hindi","Mukta",serif;font-weight:400;font-size:1.7rem}
+.hero .stat span{color:color-mix(in srgb,var(--on-hero) 80%,transparent)}
+.hero .stat.u b{color:#FFB4A6}
+.hero .bar{position:relative;z-index:1;background:rgba(255,245,230,.18)}
+.hero .bar i{background:linear-gradient(90deg,#E9B949,#F6D77F)}
+.hero .sync{position:relative;z-index:1;justify-content:center;color:color-mix(in srgb,var(--on-hero) 80%,transparent);margin:10px 0 0}
+.hero .sync.on::before{background:#8FE0A3}
+.alert{margin:14px 0 0;background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-left:4px solid var(--gold);border-radius:12px;color:var(--ink)}
+.toolbar{background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px)}
+.tab{border-color:var(--line);background:var(--surface);border-radius:999px;padding:6px 14px}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-hero);box-shadow:0 4px 10px -4px color-mix(in srgb,var(--accent) 70%,transparent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tab[aria-selected="true"]{background:var(--hero1);border-color:var(--gold);color:#FBE3A6}}
+.panel,section{border-color:var(--line);border-radius:16px;box-shadow:0 1px 0 color-mix(in srgb,var(--gold) 25%,transparent),0 8px 24px -18px rgba(78,11,25,.35)}
+section{position:relative;padding-top:18px}
+section::before{content:"";position:absolute;left:16px;right:16px;top:0;height:3px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.shead h2{font-weight:400;font-size:1.45rem;color:var(--accent)}
+.shead h2::before{content:"";display:inline-block;width:9px;height:9px;margin:0 10px 3px 0;background:var(--gold);transform:rotate(45deg);border-radius:2px}
+.scount{background:var(--gold-soft);color:var(--ink);padding:1px 10px;border-radius:999px;font-size:.8rem}
+.item{border-top-color:var(--line)}
+.cb{border-color:color-mix(in srgb,var(--accent) 55%,var(--muted));border-radius:50%}
+.cb:checked{background:var(--ok);border-color:var(--ok)}
+.chip.who{background:var(--accent-soft);color:var(--accent)}
+.idetail{background:color-mix(in srgb,var(--gold-soft) 45%,var(--bg))}
+.btn{background:var(--accent);color:var(--on-hero);border-radius:999px;padding:7px 18px}
+.btn.ghost{background:none;color:var(--muted);border:1px solid var(--line)}
+.link{border-radius:999px}
+.ehead b{font-family:"Tiro Devanagari Hindi","Mukta",serif;font-weight:400;font-size:1.1rem;color:var(--accent)}
+.mrow b{color:var(--accent)}
+details.panel>summary{color:var(--accent)}
+/* groups */
+.shead{flex-wrap:wrap}
+.gall{margin-left:auto;font-size:.82rem;padding:3px 12px;min-height:0}
+.grp{border:1px solid var(--line);border-radius:14px;margin:10px 0;background:var(--surface);overflow:hidden}
+.grp>summary{list-style:none;display:grid;grid-template-columns:1fr auto auto;gap:6px 10px;align-items:center;padding:12px 14px 10px;cursor:pointer}
+.grp>summary::-webkit-details-marker{display:none}
+.grp>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px;transition:transform .2s}
+.grp[open]>summary::after{transform:rotate(-135deg);margin:4px 4px 0}
+.grp>summary .gt{grid-column:1;grid-row:1}.grp>summary .gc{grid-column:2;grid-row:1}.grp>summary::after{grid-column:3;grid-row:1}.grp>summary .gbar{grid-row:2}
+.grp>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.gt b{display:block;font-weight:600;color:var(--accent);font-size:1.02rem}
+.gt small{display:block;color:var(--muted);font-size:.82rem}
+.gc{font-size:.8rem;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:0 9px}
+.grp.full .gc{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+.gbar{grid-column:1 / -1;height:3px;border-radius:2px;background:var(--line);overflow:hidden}
+.gbar b{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--ok));transition:width .3s}
+.grp[open]>summary{border-bottom:1px solid var(--line)}
+.grp>ul{padding:0 14px}
+.grp>ul>.item:first-child{border-top:none}
+ul.plain{margin-top:6px}
+/* lock screen */
+.lock{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:20px}
+.invite{width:min(420px,100%);text-align:center;color:var(--on-hero);border-radius:22px;padding:0 22px 26px;position:relative;overflow:hidden;
+  background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,#E3B861 35%,transparent),transparent 60%),linear-gradient(165deg,#7A1426,#3E0914);
+  border:1px solid rgba(227,184,97,.6);box-shadow:0 24px 60px -24px rgba(62,9,20,.7)}
+.invite::after{content:"";position:absolute;inset:9px;border:1px solid rgba(227,184,97,.45);border-radius:15px;pointer-events:none}
+.invite .shri{margin-top:10px}
+.invite .names{font-size:clamp(2.2rem,10vw,3rem);margin:14px 0 4px}
+.invite .kicker,.invite .when{color:rgba(255,241,222,.85)}
+.orn{margin:16px auto 14px;width:70%;height:1px;background:linear-gradient(90deg,transparent,#E3B861,transparent);position:relative}
+.orn i{position:absolute;left:50%;top:50%;width:9px;height:9px;background:#E3B861;transform:translate(-50%,-50%) rotate(45deg)}
+.lk-help{margin:0 0 12px;font-size:.95rem;color:rgba(255,241,222,.9)}
+.lk-row{position:relative;z-index:1;display:flex;gap:8px}
+.lk-row input{flex:1;min-width:0;padding:10px 14px;border-radius:999px;border:1px solid rgba(227,184,97,.7);background:rgba(255,245,230,.1);color:#FFF5E6;font-size:16px}
+.lk-row input::placeholder{color:rgba(255,241,222,.6)}
+.lk-row input:focus-visible{outline:2px solid #E3B861;outline-offset:2px}
+.lk-row .btn{background:linear-gradient(180deg,#F1CF7A,#D9A53F);color:#3E0914;font-weight:700}
+.lk-row .btn:disabled{opacity:.7}
+.lk-msg{position:relative;z-index:1;min-height:1.4em;margin:12px 0 0;font-size:.9rem;color:#FFC9BE}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<main>
-<header class="top">
-  <h1>सोमेश की शादी</h1>
-  <p>तैयारी की चेकलिस्ट, 10–11 फ़रवरी 2027, भीलवाड़ा</p>
+<div id="lock" class="lock" hidden>
+  <div class="invite">
+    <div class="garland" aria-hidden="true"></div>
+    <p class="shri">॥ श्री गणेशाय नमः ॥</p>
+    <p class="kicker">शुभ विवाह</p>
+    <h1 class="names"><span>सोमेश</span><em>संग</em><span>पूजा</span></h1>
+    <p class="when">11 फ़रवरी 2027 &nbsp;|&nbsp; भीलवाड़ा</p>
+    <div class="orn" aria-hidden="true"><i></i></div>
+    <p class="lk-help">तैयारी की लिस्ट देखने के लिए फ़ैमिली कोड डालें</p>
+    <div class="lk-row">
+      <input id="lockIn" type="password" placeholder="फ़ैमिली कोड" aria-label="फ़ैमिली कोड" autocomplete="current-password">
+      <button type="button" class="btn" id="lockBtn">खोलें</button>
+    </div>
+    <p id="lockMsg" class="lk-msg" role="alert"></p>
+  </div>
+</div>
+<main id="app" hidden>
+<header class="hero">
+  <div class="garland" aria-hidden="true"></div>
+  <p class="shri">॥ श्री गणेशाय नमः ॥</p>
+  <p class="kicker">शुभ विवाह · तैयारी</p>
+  <h1 class="names"><span>सोमेश</span><em>संग</em><span>पूजा</span></h1>
+  <p class="when">10–11 फ़रवरी 2027 &nbsp;|&nbsp; वसंत पंचमी &nbsp;|&nbsp; भीलवाड़ा</p>
   <div class="stats">
     <div class="stat"><b id="sDays">–</b><span id="sDaysL">दिन बाकी</span></div>
     <div class="stat"><b id="sDone">–</b><span>काम पूरे</span></div>
     <div class="stat u"><b id="sUrg">–</b><span>तुरंत वाले बाकी</span></div>
   </div>
-  <p id="sync" class="sync"></p>
-  <div id="codeBox" class="codebox" hidden><input id="codeIn" type="password" placeholder="फ़ैमिली कोड" aria-label="फ़ैमिली कोड"><button type="button" class="btn" id="codeBtn">Open</button></div>
   <div class="bar" role="progressbar" aria-label="कुल प्रगति"><i id="pbar"></i></div>
-  <p class="alert"><b>ध्यान दें:</b> 11 फ़रवरी वसंत पंचमी का अबूझ सावा है, इस दिन बहुत शादियाँ होती हैं। “तुरंत” वाली बुकिंग जल्दी पूरी करें और हर एडवांस की रसीद लें।</p>
+  <p id="sync" class="sync"></p>
 </header>
+<p class="alert"><b>ध्यान दें:</b> 11 फ़रवरी वसंत पंचमी का अबूझ सावा है, इस दिन बहुत शादियाँ होती हैं। “तुरंत” वाली बुकिंग जल्दी पूरी करें और हर एडवांस की रसीद लें।</p>
 
 <div class="toolbar"><nav id="tabs" role="tablist" aria-label="सेक्शन"></nav></div>
 
@@ -457,6 +566,25 @@ const DATA = [
   {when:"",what:"मिठाई",items:[["गाजर हलवा / मूंग दाल हलवा",""],["मालपुआ",""],["घेवर रबड़ी",""],["बड़े गुलाब जामुन",""],["काला जामुन",""]]}
  ],items:[]}
 ];
+const GROUPS={
+ book:[["स्थान और खाना",[0,1,2,3,14,17,18]],["सजावट और रोशनी",[4,5,6,23,24]],["बैंड, ढोल और संगीत",[7,8,9,12,10]],["फोटो और सेवाएँ",[11,13,15,16,22]],["गाड़ियाँ और ठहरना",[19,20,21]]],
+ card:[["कार्ड और निमंत्रण",[1,12,13,2,3,4]],["मेहमान",[0,5,6,8,7]],["वधू पक्ष",[9,10,11]]],
+ kharid:[["दूल्हा और परिवार के कपड़े",[0,1,3]],["दुल्हन का सामान",[2,17]],["समाई के कपड़े",[13,14,15]],["रस्मों के गिफ़्ट और नेग",[8,9,10,11,12,22,4,5]],["पूजा और रस्म सामग्री",[6,16,18,19,21,24]],["बाकी ज़रूरी सामान",[7,20,23]]],
+ samai:[["देवता",[0,1,2]],["सास-ससुर और दादीजी",[3,9]],["बड़े पापा और चाचा-चाची",[4,5,6,7,8]],["भुआ परिवार",[10,41,42]],["दीदी",[11,12,13,31]],["बड़ी मम्मी",[14,15,16]],["भैया",[17,18,19,27]],["ननिहाल: मामा, नानी, मासी",[20,21,22,23,24,25,26]],["भाई-बहन और बच्चे",[28,29,30,32,33,34,35,36,37,38,39,40]]],
+ mayra:[["देवता",[0,1,2]],["परिवार",[3,4,5,6,7,8,9]],["बड़े पापा, चाचा और भुआ",[10,11,12,13,14,15,16]],["बच्चे (लिफ़ाफ़ा)",[17,18,19,20,21]],["बड़ी मम्मी",[22,23,24]],["भैया-भाभी",[25,26,27]]]
+};
+const openGroups=new Set((()=>{try{return JSON.parse(localStorage.getItem("somesh-shaadi-v1-open")||"[]");}catch(e){return [];}})());
+function saveOpen(){try{localStorage.setItem("somesh-shaadi-v1-open",JSON.stringify([...openGroups]));}catch(e){}}
+function filtersOn(){return $("fWho").value!=="all"||$("fStatus").value!=="all"||$("fTag").value!=="all";}
+function grpEl(key,title,sub){
+  const d=el("details","grp");d.dataset.g=key;if(openGroups.has(key))d.open=true;
+  const s=el("summary");const t=el("span","gt");t.appendChild(el("b",null,title));if(sub)t.appendChild(el("small",null,sub));
+  const bar=el("i","gbar");bar.appendChild(el("b"));
+  s.append(t,el("span","gc",""),bar);d.appendChild(s);
+  const ul=el("ul");d.appendChild(ul);
+  d.addEventListener("toggle",()=>{if(filtersOn())return;if(d.open)openGroups.add(key);else openGroups.delete(key);saveOpen();});
+  return [d,ul];
+}
 const KEY="somesh-shaadi-v1";
 let state={checked:{},custom:{},who:{},note:{},edits:{},hidden:{}};
 try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}
@@ -522,7 +650,6 @@ function safeRender(){if(editing()){pendingRender=true;return;}pendingRender=fal
 document.addEventListener("focusout",()=>setTimeout(()=>{if(pendingRender&&!editing())safeRender();},50));
 function setStatus(){
   const s=$("sync");if(!s)return;
-  $("codeBox").hidden=!(SHEET_URL&&badCode);
   let t,cls="sync";
   if(!SHEET_URL)t="Google Sheet अभी जुड़ी नहीं है, लिस्ट इसी फ़ोन में सेव हो रही है";
   else if(badCode){t=code?"फ़ैमिली कोड गलत है, सही कोड डालें":"लिस्ट खोलने के लिए फ़ैमिली कोड डालें";cls+=" off";}
@@ -530,6 +657,7 @@ function setStatus(){
   else if(ready){t="Google Sheet से जुड़ी लिस्ट: बदलाव सबको दिखते हैं";cls+=" on";}
   else t="Sheet से जुड़ रहा है…";
   s.textContent=t;s.className=cls;
+  gate();
 }
 async function load(){
   if(!db||inflight||syncPending)return;
@@ -660,6 +788,11 @@ function render(){
   DATA.forEach(sec=>{
     const s=el("section");s.id=sec.id;
     const hd=el("div","shead");hd.append(el("h2",null,sec.title),el("span","scount",""));s.appendChild(hd);
+    if(GROUPS[sec.id]||sec.events&&!sec.menu){
+      const tg=btn("link gall","सब खोलें");
+      tg.onclick=()=>{const gs=[...s.querySelectorAll(".grp")];const openAll=gs.some(g=>!g.open);gs.forEach(g=>{g.open=openAll;if(openAll)openGroups.add(g.dataset.g);else openGroups.delete(g.dataset.g);});saveOpen();tg.textContent=openAll?"सब बंद करें":"सब खोलें";};
+      hd.appendChild(tg);
+    }
     if(sec.desc)s.appendChild(el("p","sdesc",sec.desc));
     if(sec.menu){
       const ck=sec.customKey||"menu";
@@ -674,28 +807,33 @@ function render(){
     }
     if(sec.events){
       sec.events.forEach((ev,ei)=>{
-        const d=el("div","event");const h=el("div","ehead");h.append(el("b",null,ev.what),el("span",null,ev.when));d.appendChild(h);
-        const ul=el("ul");ev.items.forEach((it,ii)=>ul.appendChild(itemEl(`${sec.id}-${ei}-${ii}`,it[0],it[1],"")));
-        const ek=`ev-${sec.id}-${ei}`;
-        (state.custom[ek]||[]).forEach(c=>ul.appendChild(itemEl(c.id,c.text,"","")));
-        d.appendChild(ul);
-        if(ev.addable){
-          const f=el("div","add eadd");
-          const inp=document.createElement("input");inp.type="text";inp.placeholder="Add new dance (e.g. भाभी और दीदी)";inp.setAttribute("aria-label",ev.what+" में नया "+ev.addable);
-          const ab=btn("btn","Add");f.append(inp,ab);
-          const add=()=>{let v=inp.value.trim();if(!v)return;if(!v.startsWith(ev.addable))v=ev.addable+": "+v;
-            (state.custom[ek]=state.custom[ek]||[]).push({id:"c"+Date.now(),text:v});save();render();
-            const ni=document.querySelector(`[data-ek="${ek}"] input`);if(ni)ni.focus();};
-          f.dataset.ek=ek;ab.onclick=add;inp.onkeydown=e=>{if(e.key==="Enter")add();};
-          d.appendChild(f);
-        }
+        const [d,ul]=grpEl(`${sec.id}-e${ei}`,ev.what,ev.when);
+        ev.items.forEach((it,ii)=>ul.appendChild(itemEl(`${sec.id}-${ei}-${ii}`,it[0],it[1],"")));
+        (state.custom[`ev-${sec.id}-${ei}`]||[]).forEach(c=>ul.appendChild(itemEl(c.id,c.text,"","")));
         s.appendChild(d);
       });
     }
-    const ul=el("ul");
-    (sec.items||[]).forEach((it,i)=>ul.appendChild(itemEl(`${sec.id}-${i}`,it[0],it[1],it[2])));
-    (state.custom[sec.id]||[]).forEach(c=>ul.appendChild(itemEl(c.id,c.text,"","")));
-    s.appendChild(ul);
+    const GG=GROUPS[sec.id];
+    if(GG){
+      const used=new Set();
+      GG.forEach(([title,idx],gi)=>{
+        const [d,ul]=grpEl(`${sec.id}-g${gi}`,title);
+        idx.forEach(i=>{used.add(i);const it=sec.items[i];if(it)ul.appendChild(itemEl(`${sec.id}-${i}`,it[0],it[1],it[2]));});
+        s.appendChild(d);
+      });
+      const rest=(sec.items||[]).map((it,i)=>[it,i]).filter(x=>!used.has(x[1])),cust=state.custom[sec.id]||[];
+      if(rest.length||cust.length){
+        const [d,ul]=grpEl(`${sec.id}-gx`,"नए जोड़े गए");
+        rest.forEach(([it,i])=>ul.appendChild(itemEl(`${sec.id}-${i}`,it[0],it[1],it[2])));
+        cust.forEach(c=>ul.appendChild(itemEl(c.id,c.text,"","")));
+        s.appendChild(d);
+      }
+    }else if(!sec.events||(sec.items&&sec.items.length)||(state.custom[sec.id]||[]).length){
+      const ul=el("ul","plain");
+      (sec.items||[]).forEach((it,i)=>ul.appendChild(itemEl(`${sec.id}-${i}`,it[0],it[1],it[2])));
+      (state.custom[sec.id]||[]).forEach(c=>ul.appendChild(itemEl(c.id,c.text,"","")));
+      s.appendChild(ul);
+    }
     const f=el("div","add");
     const inp=document.createElement("input");inp.type="text";inp.placeholder=sec.addPrefix?"Add new dance (e.g. भाभी और दीदी)":"Add new item";inp.setAttribute("aria-label",sec.title+" में नया काम");
     const ab=btn("btn","Add");f.append(inp,ab);
@@ -709,6 +847,12 @@ function render(){
 
 function update(){
   let tot=0,done=0;
+  document.querySelectorAll("#sections .grp").forEach(g=>{
+    const cbs=g.querySelectorAll(".cb"),d=[...cbs].filter(c=>c.checked).length;
+    g.querySelector(".gc").textContent=`${d}/${cbs.length}`;
+    g.querySelector(".gbar b").style.width=(cbs.length?d/cbs.length*100:0)+"%";
+    g.classList.toggle("full",cbs.length>0&&d===cbs.length);
+  });
   document.querySelectorAll("#sections section").forEach(s=>{
     const cbs=s.querySelectorAll(".cb");const d=[...cbs].filter(c=>c.checked).length;
     tot+=cbs.length;done+=d;
@@ -744,7 +888,11 @@ function applyFilter(){
     li.classList.toggle("hide",!ok);
     if(ok&&(tab==="all"||li.closest("section").id===tab))any++;
   });
-  document.querySelectorAll("#sections .event").forEach(e=>e.classList.toggle("hide",on&&!e.querySelector("li:not(.hide)")));
+  document.querySelectorAll("#sections .grp").forEach(g=>{
+    const vis=!!g.querySelector("li:not(.hide)");
+    g.classList.toggle("hide",!g.querySelector("li")||(on&&!vis));
+    if(on){if(vis)g.open=true;}else g.open=openGroups.has(g.dataset.g);
+  });
   document.querySelectorAll("#sections section").forEach(s=>{
     const inTab=tab==="all"||tab===s.id;
     const isMenu=!s.querySelector(".cb");
@@ -834,13 +982,29 @@ $("importBtn").onclick=()=>{
   save();render();$("importBox").value="";
   $("moveMsg").textContent=db&&ready?"डेटा आ गया और सबके साथ जुड़ गया।":"डेटा आ गया।";
 };
-$("codeBtn").onclick=()=>{
-  const v=$("codeIn").value.trim();if(!v)return;
+function okFlag(v){try{if(v===undefined)return localStorage.getItem(KEY+"-ok")==="1";if(v)localStorage.setItem(KEY+"-ok","1");else localStorage.removeItem(KEY+"-ok");}catch(e){return false;}}
+let checking=false;
+function gate(){
+  const lock=$("lock"),app=$("app"),msg=$("lockMsg"),btn=$("lockBtn");
+  const open=()=>{lock.hidden=true;app.hidden=false;};
+  const shut=t=>{app.hidden=true;lock.hidden=false;msg.textContent=t||"";};
+  if(!SHEET_URL){open();return;}
+  if(badCode){okFlag(false);checking=false;btn.disabled=false;btn.textContent="खोलें";shut(code?"यह कोड सही नहीं है। दोबारा देखकर डालें।":"");return;}
+  if(ready){okFlag(true);checking=false;open();return;}
+  if(okFlag()){open();return;}
+  if(offline){checking=false;btn.disabled=false;btn.textContent="खोलें";shut("इंटरनेट नहीं मिल रहा। नेटवर्क देखकर दोबारा कोशिश करें।");return;}
+  shut(checking?"कोड जाँचा जा रहा है…":"");
+}
+$("lockBtn").onclick=()=>{
+  const v=$("lockIn").value.trim();if(!v){$("lockIn").focus();return;}
   code=v;try{localStorage.setItem(KEY+"-code",v);}catch(e){}
-  ready=false;synced={items:{},custom:{}};remote={items:null,custom:null};connect();
+  checking=true;$("lockBtn").disabled=true;$("lockBtn").textContent="जाँच…";
+  badCode=false;offline=false;ready=false;synced={items:{},custom:{}};remote={items:null,custom:null};connect();gate();
 };
-$("codeIn").onkeydown=e=>{if(e.key==="Enter")$("codeBtn").click();};
+$("lockIn").onkeydown=e=>{if(e.key==="Enter")$("lockBtn").click();};
 connect();
+gate();
+if(!$("lock").hidden)setTimeout(()=>$("lockIn").focus(),50);
 </script>
 </body>
 </html>
