@@ -671,7 +671,17 @@ let view={tab:UI.tab||"home",sec:UI.sec||"",ev:null,person:null,admin:null};
 let hideDone=!!UI.hideDone,query="";
 let isAdmin=(()=>{try{return localStorage.getItem(KEY+"-admin")===C().adminHash;}catch(e){return false;}})();
 function saveUI(){try{localStorage.setItem(KEY+"-ui2",JSON.stringify({tab:view.tab,sec:view.sec,hideDone}));}catch(e){}}
-function go(tab,extra){view=Object.assign({tab,sec:view.sec,ev:null,person:null,admin:null},extra||{});query="";saveUI();render();window.scrollTo(0,0);}
+function snap(){return {tab:view.tab,sec:view.sec,ev:view.ev,person:view.person,admin:view.admin};}
+let ignorePop=0,afterPop=null;
+function pushNav(){const f=()=>history.pushState({v:snap()},"");if(ignorePop){afterPop=f;return;}f();}
+function go(tab,extra){view=Object.assign({tab,sec:view.sec,ev:null,person:null,admin:null},extra||{});query="";saveUI();render();window.scrollTo(0,0);pushNav();}
+window.addEventListener("popstate",e=>{
+  if(ignorePop){ignorePop--;if(afterPop){const f=afterPop;afterPop=null;f();}return;}
+  if(!$("sheet").hidden){closeSheet(true);return;}
+  const v=e.state&&e.state.v;
+  view=Object.assign({tab:"home",sec:view.sec,ev:null,person:null,admin:null},v||{});
+  query="";saveUI();render();window.scrollTo(0,0);
+});
 
 /* ---------- pieces ---------- */
 function rowEl(it,opt={}){
@@ -774,7 +784,7 @@ function eventsView(v){
     const its=allTasks().filter(i=>i.ev===e.id),s=stats(its),menus=C().menus.filter(m=>m.ev===e.id);
     const b=btn("ev");b.append(el("span","w",e.time||"—"),el("b",null,e.name));
     const meta=el("span","rm");if(s.t)meta.append(el("span","pill "+(s.t-s.d?"soon":"done"),s.t-s.d?`${s.t-s.d} काम बाकी`:"सब तैयार"));if(menus.length)meta.append(el("span","pill note","मेन्यू"));
-    b.append(meta,el("span","chev"));b.onclick=()=>{view.ev=e.id;render();window.scrollTo(0,0);};
+    b.append(meta,el("span","chev"));b.onclick=()=>{view.ev=e.id;render();window.scrollTo(0,0);pushNav();};
     if(e.date&&daysTo(e.date)<0)b.classList.add("past");card.append(b);
   });
   const gen=allTasks().filter(i=>!i.ev),gs=stats(gen);
@@ -817,7 +827,7 @@ function teamView(v){
 function personRow(name,items){
   const s=stats(items),b=btn("person"),av=el("span","av"+(name?"":" none"),name?name.trim().charAt(0):"?");
   const tx=el("span","tx");tx.append(el("b",null,name||"बिना ज़िम्मेदार"),el("span",null,`${s.t-s.d} बाकी, कुल ${s.t}`));
-  b.append(av,tx,miniBar(s),el("span","chev"));b.onclick=()=>{view.person=name;render();window.scrollTo(0,0);};return b;
+  b.append(av,tx,miniBar(s),el("span","chev"));b.onclick=()=>{view.person=name;render();window.scrollTo(0,0);pushNav();};return b;
 }
 function personView(v){
   const name=view.person,items=allTasks().filter(i=>(state.who[i.id]||"").trim()===name);
@@ -830,12 +840,12 @@ function personView(v){
 /* ---------- admin ---------- */
 function adminView(v){
   const c=C(),p=view.admin;
-  const back=()=>{view.admin=null;render();window.scrollTo(0,0);};
+  const back=()=>history.back();
   if(!p){
     v.append(Object.assign(el("p","card-sub","यहाँ से शादी की जानकारी, कार्यक्रम, सूचियाँ और मेन्यू बदल सकते हैं। एडमिन मोड में हर काम के अंदर भी बदलने और हटाने के बटन दिखते हैं।"),{style:"padding:0 6px 12px"}));
     const card=el("section","card");
     [["info","शादी की जानकारी",c.title],["events","कार्यक्रम",c.events.length+" कार्यक्रम"],["sections","सूचियाँ और समूह",c.sections.length+" सूचियाँ"],["menus","खाने का मेन्यू",c.menus.length+" खाने"],["code","एडमिन कोड बदलें",""],["fresh","नई शादी शुरू करें",""],["cfg","सेटअप कॉपी / इम्पोर्ट",""]].forEach(([k,t,s])=>{
-      const b=btn("opt");b.append(el("span",null,t),el("small",null,s),el("span","chev"));b.onclick=()=>{if(k==="info")return openInfo();if(k==="code")return openCode();view.admin=k;render();window.scrollTo(0,0);};card.append(b);});
+      const b=btn("opt");b.append(el("span",null,t),el("small",null,s),el("span","chev"));b.onclick=()=>{if(k==="info")return openInfo();if(k==="code")return openCode();view.admin=k;render();window.scrollTo(0,0);pushNav();};card.append(b);});
     const off=btn("opt danger");off.append(el("span",null,"एडमिन मोड बंद करें"));off.onclick=()=>{try{localStorage.removeItem(KEY+"-admin");}catch(e){}isAdmin=false;go("home");toast("एडमिन मोड बंद");};card.append(off);
     v.append(card);return;
   }
@@ -876,13 +886,13 @@ function evOptions(sel,cur){const o0=el("option",null,"किसी कार्
 function selField(label){const w=el("label","fld");w.append(el("span",null,label));const s=el("select");w.append(s);return {wrap:w,input:s};}
 
 /* ---------- sheet ---------- */
-function openSheet(build){const b=$("sheetBody");b.innerHTML="";build(b);$("sheet").hidden=false;document.body.style.overflow="hidden";$("panel").scrollTop=0;}
-function closeSheet(){if($("sheet").hidden)return;$("sheet").hidden=true;document.body.style.overflow="";pendingRender=false;render();}
-$("scrim").onclick=closeSheet;
+function openSheet(build){const wasOpen=!$("sheet").hidden;const b=$("sheetBody");b.innerHTML="";build(b);$("sheet").hidden=false;document.body.style.overflow="hidden";$("panel").scrollTop=0;if(!wasOpen)history.pushState({sheet:1,v:snap()},"");}
+function closeSheet(fromPop){if($("sheet").hidden)return;$("sheet").hidden=true;document.body.style.overflow="";pendingRender=false;render();if(fromPop!==true&&history.state&&history.state.sheet){ignorePop++;history.back();}}
+$("scrim").onclick=()=>closeSheet();
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
 function sheetTop(b,eyebrow,title,sub){
   const t=el("div","sh-top"),tx=el("div","tx");if(eyebrow)tx.append(el("div","eyebrow",eyebrow));tx.append(el("h2",null,title));if(sub)tx.append(el("p",null,sub));
-  const x=btn("x");x.setAttribute("aria-label","बंद करें");x.append(svg(ICON.x));x.onclick=closeSheet;t.append(tx,x);b.append(t);return tx;
+  const x=btn("x");x.setAttribute("aria-label","बंद करें");x.append(svg(ICON.x));x.onclick=()=>closeSheet();t.append(tx,x);b.append(t);return tx;
 }
 function field(label,type,value,ph){const w=el("label","fld");w.append(el("span",null,label));const i=el(type==="textarea"?"textarea":"input");if(type!=="textarea")i.type=type||"text";i.value=value||"";if(ph)i.placeholder=ph;w.append(i);return {wrap:w,input:i};}
 function autosize(t){const f=()=>{t.style.height="auto";t.style.height=Math.max(88,t.scrollHeight+2)+"px";};t.addEventListener("input",f);requestAnimationFrame(f);}
@@ -1001,7 +1011,7 @@ function openAdminLogin(){
     sheetTop(b,"एडमिन","एडमिन पैनल","कार्यक्रम, सूचियाँ और मेन्यू बदलने के लिए एडमिन कोड डालें।");
     const f=field("एडमिन कोड","password","");b.append(f.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","खोलें");
-    const go2=async()=>{const h=await sha(f.input.value.trim());if(h!==C().adminHash){toast("कोड सही नहीं है");return;}try{localStorage.setItem(KEY+"-admin",h);}catch(e){}isAdmin=true;$("sheet").hidden=true;document.body.style.overflow="";go("admin");toast("एडमिन मोड चालू");};
+    const go2=async()=>{const h=await sha(f.input.value.trim());if(h!==C().adminHash){toast("कोड सही नहीं है");return;}try{localStorage.setItem(KEY+"-admin",h);}catch(e){}isAdmin=true;closeSheet();go("admin");toast("एडमिन मोड चालू");};
     sv.onclick=go2;f.input.onkeydown=e=>{if(e.key==="Enter")go2();};acts.append(sv);b.append(acts);setTimeout(()=>f.input.focus(),60);
   });
 }
@@ -1069,7 +1079,7 @@ function render(){
   renderView();
   const a=seg.querySelector('[aria-pressed="true"]');if(a)a.scrollIntoView({block:"nearest",inline:"center"});
 }
-$("back").onclick=()=>{if(view.tab==="events")view.ev=null;else view.person=null;render();window.scrollTo(0,0);};
+$("back").onclick=()=>history.back();
 $("fab").onclick=()=>{if(view.tab==="events"){if(view.ev)openItemEdit(null,{ev:view.ev});else openEventEdit(null);}else openItemEdit(null,{sec:view.sec});};
 $("sync").onclick=()=>toast(statusText||"…");
 
@@ -1094,6 +1104,7 @@ $("lockBtn").onclick=()=>{
   badCode=false;offline=false;ready=false;synced={items:{},custom:{}};remote={items:null,custom:null};connect();gate();
 };
 $("lockIn").onkeydown=e=>{if(e.key==="Enter")$("lockBtn").click();};
+history.replaceState({v:snap()},"");
 render();
 connect();
 gate();
