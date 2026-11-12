@@ -286,6 +286,12 @@ button{cursor:pointer}
 .links .mini-b{margin-top:10px;width:auto;padding:0 14px}
 .plist{max-height:50vh;overflow:auto;margin-top:8px}
 .sh-acts.sticky{position:sticky;bottom:calc(-1 * env(safe-area-inset-bottom,0px) - 22px);background:var(--surface);padding:12px 0 calc(env(safe-area-inset-bottom,0px) + 14px);margin-bottom:-22px;border-top:1px solid var(--line);z-index:3}
+
+.sub-sum{margin:14px 0 4px;font-size:.9rem;color:var(--muted);font-weight:600}
+.srow{display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--line)}
+.srow.done .sname span{text-decoration:line-through;color:var(--muted)}
+.sname{flex:1;min-width:0;border:none;background:none;text-align:left;padding:10px 4px;display:flex;align-items:center;gap:8px;color:var(--ink)}
+.sname span{flex:1}.sname small{color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:1px 8px;font-size:.72rem;font-weight:600}
 </style>
 </head>
 <body>
@@ -668,6 +674,10 @@ const LEGACY={"बुकिंग":"Booking","कार्ड व मेहम�
 function migrateCfg(){const x=state.custom.__cfg;if(!x||!x[0]||!x[0].cfg)return false;const c=x[0].cfg;let ch=false;
   c.sections.forEach(s=>{if(LEGACY[s.name]){s.name=LEGACY[s.name];ch=true;}});
   if(c.title==="शादी की तैयारी"){c.title="Wedding Planner";ch=true;}
+  const PT={samai:["समाई के कपड़े और सामान — सबका साथ बैठकर कन्फ़र्म करें","हर व्यक्ति का सामान नीचे सबटास्क में है"],mayra:["मायरा के कपड़े और लिफ़ाफ़े — सबका साथ बैठकर कन्फ़र्म करें","हर व्यक्ति का सामान नीचे सबटास्क में है"]};
+  Object.keys(PT).forEach(sid=>{if(c.items.some(i=>i.id==="p-"+sid))return;const lst=c.items.filter(i=>i.sec===sid&&!i.parent);if(!lst.length)return;
+    const gid="g-p-"+sid;c.groups.unshift({id:gid,sec:sid,name:"मुख्य काम"});lst.forEach(i=>{i.parent="p-"+sid;});
+    c.items.push({id:"p-"+sid,sec:sid,grp:gid,text:PT[sid][0],sub:PT[sid][1],tag:"",ev:sid==="mayra"?"e6":"",after:[],parent:""});ch=true;});
   if(ch){saveCfg(c);}return ch;}
 function ensureCfg(){if(state.custom.__cfg&&state.custom.__cfg[0]){if(ready||!SHEET_URL)migrateCfg();return;}if(SHEET_URL&&!ready)return;saveCfg(C());}
 
@@ -675,12 +685,18 @@ function ensureCfg(){if(state.custom.__cfg&&state.custom.__cfg[0]){if(ready||!SH
 const evById=id=>C().events.find(e=>e.id===id);
 const secById=id=>C().sections.find(s=>s.id===id);
 function sortedEvents(){return C().events.map((e,i)=>[e,i]).sort((a,b)=>(a[0].date||"9999")<(b[0].date||"9999")?-1:(a[0].date||"9999")>(b[0].date||"9999")?1:a[1]-b[1]).map(x=>x[0]);}
-function itemsOfSec(sid){return C().items.filter(i=>i.sec===sid);}
+function kids(id){return C().items.filter(i=>i.parent===id);}
+function isDone(it){const k=kids(it.id);return k.length?k.every(x=>!!state.checked[x.id]):!!state.checked[it.id];}
+let aq="";
+function nm(id){return String(state.who[id]||"").split(",").map(s=>s.trim()).filter(Boolean);}
+function normN(s){return [...new Set(String(s||"").split(",").map(x=>x.trim()).filter(Boolean))].join(", ");}
+function allNames(){return [...new Set(Object.values(state.who).flatMap(x=>String(x||"").split(",").map(s=>s.trim()).filter(Boolean)))].sort((a,b)=>a.localeCompare(b,"hi"));}
+function itemsOfSec(sid){return C().items.filter(i=>i.sec===sid&&!i.parent);}
 function groupsOfSec(sid){const c=C(),its=itemsOfSec(sid),gids=new Set(c.groups.filter(g=>g.sec===sid).map(g=>g.id));
   const out=c.groups.filter(g=>g.sec===sid).map(g=>({g,items:its.filter(i=>i.grp===g.id)}));
   const orphan=its.filter(i=>!gids.has(i.grp));if(orphan.length)out.push({g:{id:"",sec:sid,name:"Other"},items:orphan});return out;}
-function allTasks(){return C().items;}
-function stats(items){return {t:items.length,d:items.filter(i=>state.checked[i.id]).length};}
+function allTasks(){return C().items.filter(i=>!i.parent);}
+function stats(items){return {t:items.length,d:items.filter(i=>isDone(i)).length};}
 function today(){const n=new Date();n.setHours(0,0,0,0);return n;}
 function dOf(s){return s?new Date(s+"T00:00:00"):null;}
 function daysTo(s){const d=dOf(s);return d?Math.round((d-today())/864e5):null;}
@@ -708,11 +724,11 @@ window.addEventListener("popstate",e=>{
 
 /* ---------- pieces ---------- */
 function rowEl(it,opt={}){
-  const done=!!state.checked[it.id];
+  const done=isDone(it),ks0=kids(it.id);
   const li=el("li","row"+(done?" done":""));li.dataset.id=it.id;
   if(opt.drag){const hd=el("span","grip");hd.setAttribute("aria-hidden","true");hd.textContent="⋮⋮";li.append(hd);}
   const ck=btn("ck");ck.setAttribute("role","checkbox");ck.setAttribute("aria-checked",done);ck.setAttribute("aria-label",it.text);ck.append(el("i"));
-  ck.onclick=()=>{state.checked[it.id]=!done;save();render();if(!done)toast("Done");};
+  ck.onclick=()=>{if(ks0.length){openItem(it.id);return;}state.checked[it.id]=!done;save();render();if(!done)toast("Done");};
   const b=btn("rb"),tx=el("span","tx");
   tx.append(el("span","rt",it.text));
   const sub=[opt.showSec?(secById(it.sec)||{}).name:"",it.sub].filter(Boolean).join(" — ");
@@ -721,7 +737,8 @@ function rowEl(it,opt={}){
   if(it.tag&&!done)m.append(el("span","pill "+it.tag,it.tag==="urgent"?"Urgent":"Soon"));
   const pend=pendingDeps(it);if(pend.length&&!done)m.append(el("span","pill block","Needs: "+short(pend[0].text,20)+(pend.length>1?" +"+(pend.length-1):"")));
   if(it.ev&&!opt.hideEv){const e=evById(it.ev);if(e)m.append(el("span","pill evt",e.name.length>18?e.name.slice(0,17)+"…":e.name));}
-  const w=(state.who[it.id]||"").trim();if(w&&!opt.hideWho)m.append(el("span","pill who",w));
+  if(!opt.hideWho)nm(it.id).forEach(n=>m.append(el("span","pill who",n)));
+  if(ks0.length){const dn=ks0.filter(x=>state.checked[x.id]).length;m.append(el("span","pill "+(dn===ks0.length?"done":"soon"),dn+"/"+ks0.length+" subtasks"));}
   if((state.note[it.id]||"").trim())m.append(el("span","pill note","Note"));
   tx.append(m);b.append(tx,el("span","chev"));
   b.onclick=()=>openItem(it.id);
@@ -729,7 +746,7 @@ function rowEl(it,opt={}){
 }
 function short(s,n){return s.length>n?s.slice(0,n-1)+"…":s;}
 function itemMap(){const m={};C().items.forEach(i=>m[i.id]=i);return m;}
-function pendingDeps(it){if(!it.after||!it.after.length)return [];const m=itemMap();return it.after.map(id=>m[id]).filter(x=>x&&!state.checked[x.id]);}
+function pendingDeps(it){if(!it.after||!it.after.length)return [];const m=itemMap();return it.after.map(id=>m[id]).filter(x=>x&&!isDone(x));}
 function dependents(id){return C().items.filter(i=>(i.after||[]).includes(id));}
 function reaches(from,to){const m=itemMap(),seen=new Set(),st=[from];while(st.length){const x=st.pop();if(x===to)return true;if(seen.has(x))continue;seen.add(x);((m[x]||{}).after||[]).forEach(y=>st.push(y));}return false;}
 let reorder=false;
@@ -767,7 +784,7 @@ function evMeta(e){const d=daysTo(e.date);return [e.time,d===0?"Today":d===1?"To
 /* ---------- views ---------- */
 function homeView(v){
   const c=C(),tasks=allTasks(),st=stats(tasks),pct=st.t?Math.round(st.d/st.t*100):0;
-  const urgent=tasks.filter(i=>i.tag==="urgent"&&!state.checked[i.id]);
+  const urgent=tasks.filter(i=>i.tag==="urgent"&&!isDone(i));
   const days=daysTo(c.date);
   const h=el("section","hero");
   h.append(Object.assign(el("div","mono"),{innerHTML:"शुभ"}),el("p","shri","॥ श्री गणेशाय नमः ॥"),el("h2","names",c.title||"Wedding Planner"));
@@ -817,7 +834,7 @@ function eventsView(v){
     const meta=el("div","sechead");meta.append(ring(st),el("p",null,its.length?`${st.t-st.d} left, ${st.d} done`:"No tasks linked to this event"));hd.append(meta);
     if(isAdmin){const a=el("div","adm-row");const e1=btn("b","Edit event");e1.onclick=()=>openEventEdit(e.id);const e2=btn("b","+ Task");e2.onclick=()=>openItemEdit(null,{ev:e.id});const e3=btn("b","+ Menu");e3.onclick=()=>openMenuEdit(null,{ev:e.id});a.append(e1,e2,e3);hd.append(a);}
     v.append(hd);
-    c.sections.forEach(s=>{const x=its.filter(i=>i.sec===s.id).filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;v.append(grpHead(s.name,its.filter(i=>i.sec===s.id)),listOf(x,{hideEv:true}));});
+    c.sections.forEach(s=>{const x=its.filter(i=>i.sec===s.id).filter(i=>!(hideDone&&isDone(i)));if(!x.length)return;v.append(grpHead(s.name,its.filter(i=>i.sec===s.id)),listOf(x,{hideEv:true}));});
     if(menus.length){v.append(el("div","grp-h"));const h=v.lastChild;h.append(el("h3",null,"Food menu"));
       const card=el("div","card");menus.forEach(m=>card.append(menuRow(m,true)));v.append(card);}
     return;
@@ -851,7 +868,7 @@ function listsView(v){
   const groups=groupsOfSec(sid),st=stats(itemsOfSec(sid));
   const head=el("div","sechead");head.append(ring(st),el("p",null,`${st.d} / ${st.t} done${sec.desc?" — "+sec.desc:""}`));v.append(head);
   tools(v);let shown=0;
-  groups.forEach(({g,items})=>{const x=items.filter(match).filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;
+  groups.forEach(({g,items})=>{const x=items.filter(match).filter(i=>!(hideDone&&isDone(i)));if(!x.length)return;
     const ul=listOf(x.map(i=>{const pre=g.name+": ";return i.text.startsWith(pre)?Object.assign({},i,{text:i.text.slice(pre.length)}):i;}),{drag:reorder&&isAdmin});
     if(reorder&&isAdmin)enableDrag(ul);
     v.append(grpHead(g.name,items),ul);shown+=x.length;});
@@ -861,7 +878,7 @@ function listsView(v){
 function teamView(v){
   if(view.person!==null)return personView(v);
   const tasks=allTasks(),map={},none=[];
-  tasks.forEach(i=>{const w=(state.who[i.id]||"").trim();if(!w)none.push(i);else(map[w]=map[w]||[]).push(i);});
+  tasks.forEach(i=>{const ns=nm(i.id);if(!ns.length)none.push(i);else ns.forEach(n=>(map[n]=map[n]||[]).push(i));});
   v.append(Object.assign(el("p","card-sub","Who has which tasks. Tap a name to see all their tasks."),{style:"padding:0 6px 12px"}));
   const card=el("section","card");
   Object.keys(map).sort((a,b)=>a.localeCompare(b,"hi")).forEach(n=>card.append(personRow(n,map[n])));
@@ -880,11 +897,11 @@ function personRow(name,items){
   b.append(av,tx,miniBar(s),el("span","chev"));b.onclick=()=>{view.person=name;render();window.scrollTo(0,0);pushNav();};return b;
 }
 function personView(v){
-  const name=view.person,items=allTasks().filter(i=>(state.who[i.id]||"").trim()===name);
+  const name=view.person,items=allTasks().filter(i=>name?nm(i.id).includes(name):nm(i.id).length===0);
   const st=stats(items),head=el("div","sechead");head.append(ring(st),el("p",null,`${st.t-st.d} left, ${st.d} done`));
   if(name){const rn=btn("toggle","Rename");rn.onclick=()=>openRename(name);head.append(rn);}
   v.append(head);if(!items.length){v.append(el("p","empty","No tasks."));return;}
-  C().sections.forEach(s=>{const all=items.filter(i=>i.sec===s.id),x=all.filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;v.append(grpHead(s.name,all),listOf(x,{hideWho:true}));});
+  C().sections.forEach(s=>{const all=items.filter(i=>i.sec===s.id),x=all.filter(i=>!(hideDone&&isDone(i)));if(!x.length)return;v.append(grpHead(s.name,all),listOf(x,{hideWho:true}));});
 }
 
 /* ---------- admin ---------- */
@@ -894,13 +911,25 @@ function adminView(v){
   if(!p){
     v.append(Object.assign(el("p","card-sub","Edit wedding details, events, lists and menus here. In admin mode every task also shows edit and delete options."),{style:"padding:0 6px 12px"}));
     const card=el("section","card");
-    [["info","Wedding details",c.title],["events","Events",c.events.length+" events"],["sections","Lists & groups",c.sections.length+" lists"],["menus","Food menu",c.menus.length+" meals"],["code","Change admin code",""],["fresh","Start a new wedding",""],["cfg","Copy / Import setup",""]].forEach(([k,t,s])=>{
+    [["tasks","All tasks",c.items.length+" tasks"],["info","Wedding details",c.title],["events","Events",c.events.length+" events"],["sections","Lists & groups",c.sections.length+" lists"],["menus","Food menu",c.menus.length+" meals"],["code","Change admin code",""],["fresh","Start a new wedding",""],["cfg","Copy / Import setup",""]].forEach(([k,t,s])=>{
       const b=btn("opt");b.append(el("span",null,t),el("small",null,s),el("span","chev"));b.onclick=()=>{if(k==="info")return openInfo();if(k==="code")return openCode();view.admin=k;render();window.scrollTo(0,0);pushNav();};card.append(b);});
     const off=btn("opt danger");off.append(el("span",null,"Turn off admin mode"));off.onclick=()=>{try{localStorage.removeItem(KEY+"-admin");}catch(e){}isAdmin=false;go("home");toast("Admin mode off");};card.append(off);
     v.append(card);return;
   }
   const bb=btn("lnk backlnk","‹ Back");bb.onclick=back;v.append(bb);
-  if(p==="events"){
+  if(p==="tasks"){
+    const tb=el("div","tools"),sl=el("label","search");sl.append(svg(ICON.search));const inp=el("input");inp.type="search";inp.placeholder="Search tasks to edit";inp.value=aq;sl.append(inp);
+    const ad=btn("toggle","+ Add");ad.onclick=()=>openItemEdit(null,{sec:view.sec||(c.sections[0]||{}).id});tb.append(sl,ad);v.append(tb);
+    const holder=el("div");v.append(holder);
+    const paint=()=>{holder.innerHTML="";const q=aq.trim().toLowerCase();
+      c.sections.forEach(sec=>{const its=c.items.filter(i=>i.sec===sec.id&&(!q||i.text.toLowerCase().includes(q)));if(!its.length)return;
+        const card=el("section","card");card.append(cardHead(sec.name+" ("+its.length+")"));
+        its.forEach(i=>{const b=btn("ev"),pr=i.parent?c.items.find(x=>x.id===i.parent):null,nk=kids(i.id).length;
+          b.append(el("span","w",pr?"in: "+short(pr.text,32):(nk?nk+" subtasks":"Task")),el("b",null,i.text),el("span","chev"));b.onclick=()=>openItemEdit(i.id);card.append(b);});
+        holder.append(card);});
+      if(!holder.children.length)holder.append(el("p","empty","No matches."));};
+    inp.oninput=()=>{aq=inp.value;paint();};paint();
+  }else if(p==="events"){
     const card=el("section","card");card.append(cardHead("Events","+ Add",()=>openEventEdit(null)));
     sortedEvents().forEach(e=>{const b=btn("ev");b.append(el("span","w",fmtDate(e.date,{day:"numeric",month:"short",year:"numeric"})+(e.time?" — "+e.time:"")),el("b",null,e.name),el("span","chev"));b.onclick=()=>openEventEdit(e.id);card.append(b);});
     v.append(card);
@@ -949,39 +978,49 @@ function autosize(t){const f=()=>{t.style.height="auto";t.style.height=Math.max(
 let sheetOnClose=null;
 function openItem(id){
   const it=C().items.find(i=>i.id===id);if(!it)return;
-  let done=!!state.checked[it.id],discard=false;
+  const ks=kids(it.id),isParent=ks.length>0,par=it.parent?C().items.find(x=>x.id===it.parent):null;
+  let done=isParent?false:!!state.checked[it.id],discard=false;
   openSheet(b=>{
     const e=evById(it.ev),s=secById(it.sec);
-    sheetTop(b,[s&&s.name,e&&e.name].filter(Boolean).join(" — "),it.text,it.sub);
-    const st=btn("state");
+    sheetTop(b,[s&&s.name,e&&e.name,par&&("in: "+short(par.text,24))].filter(Boolean).join(" — "),it.text,it.sub);
+    const st=btn("state");const subHolder=el("div");
     const paint=()=>{st.className="state"+(done?" on":"");st.innerHTML="";st.append(el("i"));const x=el("span");x.append(el("b",null,done?"Completed":"Pending"),el("br"),el("small",null,done?"Tap to mark as pending":"Tap when the task is done"));st.append(x);};
-    paint();st.onclick=()=>{done=!done;paint();};b.append(st);
-    const f1=field("Assigned to","text",state.who[it.id],"Type a name or pick below");f1.input.setAttribute("autocomplete","off");
-    const names=[...new Set(Object.values(state.who).map(x=>(x||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"hi"));
+    if(isParent)b.append(subHolder);else{paint();st.onclick=()=>{done=!done;paint();};b.append(st);}
+    const f1=field("Assigned to (one or more people)","text",state.who[it.id],"Tap names below, or type: Ram, Shyam");f1.input.setAttribute("autocomplete","off");
+    const names=allNames();
     const chips=el("div","namechips");
-    const paintChips=()=>{chips.innerHTML="";names.forEach(n=>{const c=btn("nchip"+(f1.input.value.trim()===n?" on":""),n);c.onclick=()=>{f1.input.value=f1.input.value.trim()===n?"":n;paintChips();};chips.append(c);});};
+    const cur=()=>f1.input.value.split(",").map(s=>s.trim()).filter(Boolean);
+    const paintChips=()=>{chips.innerHTML="";const sel=cur();[...new Set(names.concat(sel))].forEach(n=>{const c=btn("nchip"+(sel.includes(n)?" on":""),n);c.onclick=()=>{const s=cur();f1.input.value=(s.includes(n)?s.filter(x=>x!==n):s.concat(n)).join(", ");paintChips();};chips.append(c);});};
     f1.input.oninput=paintChips;paintChips();f1.wrap.append(chips);
     const f2=field("Contact & notes","textarea",state.note[it.id],"Vendor name, phone, rate, advance, address…");autosize(f2.input);
     const calls=el("div","calls");
     const showCalls=()=>{calls.innerHTML="";(f2.input.value.match(PHONE)||[]).forEach(n=>{const a=el("a",null,"Call "+n.trim());a.href="tel:"+n.replace(/[\s-]/g,"");calls.append(a);});};
     f2.input.addEventListener("input",showCalls);showCalls();
     b.append(f1.wrap,f2.wrap,calls);
-    const commit=()=>{if(discard)return false;const w=f1.input.value.trim(),n=f2.input.value;
-      const ch=w!==((state.who[it.id]||"").trim())||n!==(state.note[it.id]||"")||done!==!!state.checked[it.id];
-      if(!ch)return false;state.who[it.id]=w;state.note[it.id]=n;state.checked[it.id]=done;save();return true;};
+    const commit=()=>{if(discard)return false;const w=normN(f1.input.value),n=f2.input.value;
+      const ch=w!==normN(state.who[it.id])||n!==(state.note[it.id]||"")||(!isParent&&done!==!!state.checked[it.id]);
+      if(!ch)return false;state.who[it.id]=w;state.note[it.id]=n;if(!isParent)state.checked[it.id]=done;save();return true;};
+    if(isParent){const info=el("div","sub-sum");const upd=()=>{info.textContent=ks.filter(x=>state.checked[x.id]).length+" of "+ks.length+" subtasks done";};upd();subHolder.append(info);
+      const gn={};C().groups.forEach(g=>gn[g.id]=g.name);let lg=null;
+      ks.forEach(k=>{if(k.grp!==lg){lg=k.grp;subHolder.append(el("div","lh",gn[k.grp]||"Other"));}
+        const r=el("div","srow"),cb=btn("ck");cb.setAttribute("role","checkbox");cb.append(el("i"));
+        const pk=()=>{cb.setAttribute("aria-checked",!!state.checked[k.id]);r.classList.toggle("done",!!state.checked[k.id]);};
+        cb.onclick=()=>{state.checked[k.id]=!state.checked[k.id];save();pk();upd();};
+        const nb=btn("sname");nb.append(el("span",null,k.text));nm(k.id).forEach(x=>nb.append(el("small",null,x)));
+        nb.onclick=()=>{commit();sheetOnClose=null;openItem(k.id);};pk();r.append(cb,nb);subHolder.append(r);});}
     const m=itemMap(),pre=(it.after||[]).map(x=>m[x]).filter(Boolean),post=dependents(it.id);
     if(pre.length||post.length||isAdmin){
       const lk=el("div","links");
-      const sec=(title,list)=>{if(!list.length)return;lk.append(el("div","lh",title));list.forEach(x=>{const r=btn("lrow"+(state.checked[x.id]?" ok":""));r.append(el("i"),el("span",null,x.text));r.onclick=()=>{commit();sheetOnClose=null;openItem(x.id);};lk.append(r);});};
+      const sec=(title,list)=>{if(!list.length)return;lk.append(el("div","lh",title));list.forEach(x=>{const r=btn("lrow"+(isDone(x)?" ok":""));r.append(el("i"),el("span",null,x.text));r.onclick=()=>{commit();sheetOnClose=null;openItem(x.id);};lk.append(r);});};
       sec("Must be done first",pre);sec("Tasks that come after",post);
       if(isAdmin){const lb=btn("b mini-b","Link tasks");lb.onclick=()=>{commit();sheetOnClose=null;openLinkPicker(it.id);};lk.append(lb);}
       b.append(lk);
     }
     sheetOnClose=()=>{if(commit())toast("Saved");};
-    if(isAdmin){const ad=el("div","sh-acts");const eb=btn("b","Edit");eb.onclick=()=>{commit();sheetOnClose=null;openItemEdit(it.id);};const mg=btn("b","Merge into…");mg.onclick=()=>{commit();sheetOnClose=null;openMergePicker(it.id);};ad.append(eb,mg);b.append(ad);}
+    if(isAdmin){const ad=el("div","sh-acts");if(isParent){const as=btn("b","+ Subtask");as.onclick=()=>{commit();sheetOnClose=null;openItemEdit(null,{sec:it.sec,parent:it.id});};ad.append(as);}const eb=btn("b","Edit");eb.onclick=()=>{commit();sheetOnClose=null;openItemEdit(it.id);};const mg=btn("b","Merge into…");mg.onclick=()=>{commit();sheetOnClose=null;openMergePicker(it.id);};ad.append(eb,mg);b.append(ad);}
     const acts=el("div","sh-acts sticky");
-    const cn=btn("b","Cancel");cn.onclick=()=>{discard=true;closeSheet();};
-    const sv=btn("b primary","Save");sv.onclick=()=>closeSheet();
+    const cn=btn("b","Cancel");cn.onclick=()=>{discard=true;if(par){sheetOnClose=null;openItem(par.id);}else closeSheet();};
+    const sv=btn("b primary","Save");sv.onclick=()=>{if(par){if(commit())toast("Saved");sheetOnClose=null;openItem(par.id);}else closeSheet();};
     acts.append(cn,sv);b.append(acts);
   });
 }
@@ -989,7 +1028,7 @@ function pickerList(b,excludeId,selected,multi){
   const q=field("Search","text","","Search tasks…");b.append(q.wrap);
   const box=el("div","plist");b.append(box);
   const paint=()=>{box.innerHTML="";const s=q.input.value.trim().toLowerCase();
-    C().sections.forEach(sec=>{const its=C().items.filter(i=>i.sec===sec.id&&i.id!==excludeId&&(!s||i.text.toLowerCase().includes(s)));if(!its.length)return;
+    C().sections.forEach(sec=>{const its=C().items.filter(i=>i.sec===sec.id&&!i.parent&&i.id!==excludeId&&(!s||i.text.toLowerCase().includes(s)));if(!its.length)return;
       box.append(el("div","lh",sec.name));
       its.forEach(i=>{const r=btn("prow"+(selected.has(i.id)?" on":""));r.append(el("i"),el("span",null,i.text));
         r.onclick=()=>{if(multi){selected.has(i.id)?selected.delete(i.id):selected.add(i.id);}else{selected.clear();selected.add(i.id);}paint();};box.append(r);});});};
@@ -1009,8 +1048,7 @@ function openLinkPicker(id){
   });
 }
 function mergeItems(fromId,intoId){
-  const a=(state.who[fromId]||"").trim(),bw=(state.who[intoId]||"").trim();
-  if(a&&a!==bw)state.who[intoId]=bw?bw+", "+a:a;
+  state.who[intoId]=normN(nm(intoId).concat(nm(fromId)).join(", "));
   const na=state.note[fromId]||"",nb=state.note[intoId]||"";if(na.trim())state.note[intoId]=nb.trim()?nb+"\n"+na:na;
   if(state.checked[fromId]&&!state.checked[intoId])state.checked[intoId]=true;
   delete state.who[fromId];delete state.note[fromId];delete state.checked[fromId];
@@ -1044,14 +1082,18 @@ function openItemEdit(id,def){
     fillG();fs.input.onchange=fillG;
     const fn=field("New group name","text","");fn.wrap.hidden=fg.input.value!=="__new";fg.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});fs.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});
     const ft=selField("Priority");[["","Normal"],["urgent","Urgent"],["soon","Soon"]].forEach(([v,l])=>{const o=el("option",null,l);o.value=v;ft.input.append(o);});ft.input.value=it.tag||"";
-    b.append(f1.wrap,f2.wrap,fe.wrap,fs.wrap,fg.wrap,fn.wrap,ft.wrap);
+    const fp=selField("Subtask of");const po=el("option",null,"None — a standalone task");po.value="";fp.input.append(po);
+    c.items.filter(x=>!x.parent&&x.id!==it.id).forEach(x=>{const o=el("option",null,short(x.text,38)+" · "+((secById(x.sec)||{}).name||""));o.value=x.id;fp.input.append(o);});
+    fp.input.value=it.parent||"";if(kids(it.id).length)fp.wrap.hidden=true;
+    fp.input.onchange=()=>{const px=c.items.find(x=>x.id===fp.input.value);if(px){fs.input.value=px.sec;fillG();fn.wrap.hidden=fg.input.value!=="__new";}};
+    b.append(f1.wrap,f2.wrap,fp.wrap,fe.wrap,fs.wrap,fg.wrap,fn.wrap,ft.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const text=f1.input.value.trim();if(!text){f1.input.focus();return;}
       edit(c=>{let grp=fg.input.value;if(grp==="__new"){const n=fn.input.value.trim()||"Other";grp=uid("g");c.groups.push({id:grp,sec:fs.input.value,name:n});}
-        const o={id:it.id,sec:fs.input.value,grp,text,sub:f2.input.value.trim(),tag:ft.input.value,ev:fe.input.value,after:it.after||[]};
+        const pr=fp.input.value,px=pr?c.items.find(x=>x.id===pr):null;const o={id:it.id,sec:px?px.sec:fs.input.value,grp,text,sub:f2.input.value.trim(),tag:ft.input.value,ev:fe.input.value,after:it.after||[],parent:pr};
         const i=c.items.findIndex(x=>x.id===it.id);if(i>=0)c.items[i]=o;else c.items.push(o);});
       closeSheet();toast("Saved");};
-    if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.items=c.items.filter(x=>x.id!==id);});closeSheet();toast("Deleted");});acts.append(db);}
+    if(id){const nk=kids(id).length;const db=btn("b danger","Delete");twoTap(db,"Delete",nk?"Delete task + "+nk+" subtasks?":"Confirm delete?",()=>{edit(c=>{c.items=c.items.filter(x=>x.id!==id&&x.parent!==id);});closeSheet();toast("Deleted");});acts.append(db);}
     acts.append(sv);b.append(acts);if(!id)setTimeout(()=>f1.input.focus(),60);
   });
 }
@@ -1135,10 +1177,10 @@ function openAdminLogin(){
 }
 function openRename(name){
   openSheet(b=>{
-    sheetTop(b,"Team","Rename","The new name replaces this name on all their tasks. Leave it empty to remove the name from all tasks.");
+    sheetTop(b,"Team","Rename","The new name replaces this name on all their tasks. If it matches another person, their tasks are combined. Leave empty to remove this name from all tasks.");
     const f=field("Name","text",name);b.append(f.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
-    sv.onclick=()=>{const nv=f.input.value.trim();Object.keys(state.who).forEach(k=>{if((state.who[k]||"").trim()===name)state.who[k]=nv;});save();view.person=nv||null;closeSheet();};
+    sv.onclick=()=>{const nv=f.input.value.trim().replace(/,/g," ");Object.keys(state.who).forEach(k=>{const a=nm(k);if(a.includes(name)){state.who[k]=normN(a.map(x=>x===name?nv:x).join(", "));}});save();view.person=nv||null;closeSheet();};
     acts.append(sv);b.append(acts);
   });
 }
@@ -1179,7 +1221,7 @@ function render(){
   ensureCfg();
   const c=C();
   if(isAdmin){try{if(localStorage.getItem(KEY+"-admin")!==c.adminHash)isAdmin=false;}catch(e){}}
-  const u=[...new Set(Object.values(state.who).map(x=>(x||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"hi"));
+  const u=allNames();
   const dl=$("names");dl.innerHTML="";u.forEach(n=>{const o=el("option");o.value=n;dl.append(o);});
   const T=tabs();if(!T.some(t=>t.id===view.tab))view.tab="home";
   const nav=$("nav");nav.innerHTML="";nav.style.gridTemplateColumns=`repeat(${T.length},1fr)`;
