@@ -268,6 +268,24 @@ button{cursor:pointer}
 .mini-b{flex:none!important;height:38px!important;padding:0 10px;font-size:.82rem}
 .datehdr h3{color:var(--ink2)}
 .opt small{margin-left:auto;max-width:55%;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.grip{flex:none;width:22px;margin-left:-6px;color:var(--muted);font-size:.85rem;letter-spacing:-2px;cursor:grab;touch-action:none;user-select:none;text-align:center}
+.row.dragging{background:var(--gold-soft);box-shadow:var(--shadow);z-index:2}
+.pill.block{background:var(--surface2);color:var(--muted);border:1px dashed var(--line)}
+.namechips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.nchip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:.85rem;color:var(--ink2)}
+.nchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.links{margin-top:16px;border-top:1px solid var(--line);padding-top:6px}
+.lh{font-size:.82rem;font-weight:600;color:var(--muted);margin:10px 2px 6px}
+.lrow,.prow{display:flex;align-items:center;gap:10px;width:100%;border:none;background:none;text-align:left;padding:8px 4px;color:var(--ink);border-bottom:1px solid var(--line)}
+.lrow i,.prow i{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted)}
+.lrow.ok i{background:var(--ok);border-color:var(--ok)}
+.lrow.ok span{text-decoration:line-through;color:var(--muted)}
+.prow i{border-radius:5px}.prow.on i{background:var(--accent);border-color:var(--accent)}
+.prow.on span{font-weight:500}
+.links .mini-b{margin-top:10px;width:auto;padding:0 14px}
+.plist{max-height:50vh;overflow:auto;margin-top:8px}
+.sh-acts.sticky{position:sticky;bottom:calc(-1 * env(safe-area-inset-bottom,0px) - 22px);background:var(--surface);padding:12px 0 calc(env(safe-area-inset-bottom,0px) + 14px);margin-bottom:-22px;border-top:1px solid var(--line);z-index:3}
 </style>
 </head>
 <body>
@@ -280,7 +298,7 @@ button{cursor:pointer}
     <div class="rule"></div>
     <label for="lockIn">फ़ैमिली कोड</label>
     <input id="lockIn" type="password" autocomplete="current-password" placeholder="••••••">
-    <button type="button" class="b primary" id="lockBtn">खोलें</button>
+    <button type="button" class="b primary" id="lockBtn">Open</button>
     <p id="lockMsg" class="lockmsg" role="alert"></p>
   </div>
 </div>
@@ -686,7 +704,8 @@ window.addEventListener("popstate",e=>{
 /* ---------- pieces ---------- */
 function rowEl(it,opt={}){
   const done=!!state.checked[it.id];
-  const li=el("li","row"+(done?" done":""));
+  const li=el("li","row"+(done?" done":""));li.dataset.id=it.id;
+  if(opt.drag){const hd=el("span","grip");hd.setAttribute("aria-hidden","true");hd.textContent="⋮⋮";li.append(hd);}
   const ck=btn("ck");ck.setAttribute("role","checkbox");ck.setAttribute("aria-checked",done);ck.setAttribute("aria-label",it.text);ck.append(el("i"));
   ck.onclick=()=>{state.checked[it.id]=!done;save();render();if(!done)toast("पूरा हुआ");};
   const b=btn("rb"),tx=el("span","tx");
@@ -695,12 +714,33 @@ function rowEl(it,opt={}){
   if(sub)tx.append(el("span","rs",sub));
   const m=el("span","rm");
   if(it.tag&&!done)m.append(el("span","pill "+it.tag,it.tag==="urgent"?"तुरंत":"जल्दी"));
+  const pend=pendingDeps(it);if(pend.length&&!done)m.append(el("span","pill block","पहले: "+short(pend[0].text,20)+(pend.length>1?" +"+(pend.length-1):"")));
   if(it.ev&&!opt.hideEv){const e=evById(it.ev);if(e)m.append(el("span","pill evt",e.name.length>18?e.name.slice(0,17)+"…":e.name));}
   const w=(state.who[it.id]||"").trim();if(w&&!opt.hideWho)m.append(el("span","pill who",w));
   if((state.note[it.id]||"").trim())m.append(el("span","pill note","नोट"));
   tx.append(m);b.append(tx,el("span","chev"));
   b.onclick=()=>openItem(it.id);
   li.append(ck,b);return li;
+}
+function short(s,n){return s.length>n?s.slice(0,n-1)+"…":s;}
+function itemMap(){const m={};C().items.forEach(i=>m[i.id]=i);return m;}
+function pendingDeps(it){if(!it.after||!it.after.length)return [];const m=itemMap();return it.after.map(id=>m[id]).filter(x=>x&&!state.checked[x.id]);}
+function dependents(id){return C().items.filter(i=>(i.after||[]).includes(id));}
+function reaches(from,to){const m=itemMap(),seen=new Set(),st=[from];while(st.length){const x=st.pop();if(x===to)return true;if(seen.has(x))continue;seen.add(x);((m[x]||{}).after||[]).forEach(y=>st.push(y));}return false;}
+let reorder=false;
+function enableDrag(ul){
+  ul.querySelectorAll(".grip").forEach(g=>{
+    g.addEventListener("pointerdown",e=>{
+      e.preventDefault();const li=g.closest("li");li.classList.add("dragging");
+      const move=ev=>{const y=ev.clientY;const sibs=[...ul.children].filter(x=>x!==li);
+        let before=null;for(const s of sibs){const r=s.getBoundingClientRect();if(y<r.top+r.height/2){before=s;break;}}
+        if(before)ul.insertBefore(li,before);else ul.append(li);};
+      const up=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",up);window.removeEventListener("pointercancel",up);li.classList.remove("dragging");
+        const ids=[...ul.children].map(x=>x.dataset.id).filter(Boolean);
+        edit(c=>{const pos=ids.map(id=>c.items.findIndex(i=>i.id===id)).filter(i=>i>=0).sort((a,b)=>a-b);const objs=ids.map(id=>c.items.find(i=>i.id===id)).filter(Boolean);pos.forEach((p,k)=>c.items[p]=objs[k]);});toast("Order saved");};
+      window.addEventListener("pointermove",move);window.addEventListener("pointerup",up);window.addEventListener("pointercancel",up);
+    });
+  });
 }
 function cardHead(title,link,onLink){const h=el("div","card-h");h.append(el("h2",null,title));if(link){const l=btn("lnk",link);l.onclick=onLink;h.append(l);}return h;}
 function ring(st){const r=el("div","ring");r.style.setProperty("--p",st.t?Math.round(st.d/st.t*100):0);r.append(el("span",null,st.t?Math.round(st.d/st.t*100)+"%":"–"));return r;}
@@ -710,8 +750,10 @@ function tools(v){
   const inp=el("input");inp.type="search";inp.placeholder="खोजें — नाम, काम, नोट";inp.value=query;inp.setAttribute("aria-label","खोजें");
   inp.oninput=()=>{query=inp.value;const p=inp.selectionStart;renderView();const n=document.querySelector(".search input");if(n){n.focus();try{n.setSelectionRange(p,p);}catch(e){}}};
   s.append(inp);
-  const tg=btn("toggle","पूरे छिपाएँ");tg.setAttribute("aria-pressed",hideDone);tg.onclick=()=>{hideDone=!hideDone;saveUI();renderView();};
-  t.append(s,tg);v.append(t);
+  const tg=btn("toggle","Hide done");tg.setAttribute("aria-pressed",hideDone);tg.onclick=()=>{hideDone=!hideDone;saveUI();renderView();};
+  t.append(s,tg);
+  if(isAdmin&&view.tab==="lists"){const ro=btn("toggle","Reorder");ro.setAttribute("aria-pressed",reorder);ro.onclick=()=>{reorder=!reorder;query="";renderView();};t.append(ro);}
+  v.append(t);
 }
 function listOf(items,opt){const ul=el("ul","list");items.forEach(i=>ul.append(rowEl(i,opt)));return ul;}
 function grpHead(title,items){const gs=stats(items),h=el("div","grp-h");h.append(el("h3",null,title),el("span","cnt"+(gs.t&&gs.d===gs.t?" full":""),`${gs.d}/${gs.t}`));return h;}
@@ -732,7 +774,7 @@ function homeView(v){
   const ne=nextEvent();
   if(ne){
     const its=allTasks().filter(i=>i.ev===ne.id),s=stats(its),menus=c.menus.filter(m=>m.ev===ne.id);
-    const nc=el("section","card next");nc.append(cardHead("अगला कार्यक्रम","खोलें",()=>go("events",{ev:ne.id})));
+    const nc=el("section","card next");nc.append(cardHead("अगला कार्यक्रम","Open",()=>go("events",{ev:ne.id})));
     const b=btn("nextbody");b.onclick=()=>go("events",{ev:ne.id});
     b.append(el("span","w",fmtDate(ne.date)+(ne.time?" — "+ne.time:"")),el("b",null,ne.name));
     const meta=el("span","rm");
@@ -742,13 +784,13 @@ function homeView(v){
     b.append(meta);nc.append(b);v.append(nc);
   }
 
-  const uc=el("section","card");uc.append(cardHead("सबसे ज़रूरी","सभी",()=>go("lists",{sec:(urgent[0]||{}).sec||view.sec})));
+  const uc=el("section","card");uc.append(cardHead("सबसे ज़रूरी","See all",()=>go("lists",{sec:(urgent[0]||{}).sec||view.sec})));
   if(urgent.length){uc.append(listOf(urgent.slice(0,5),{showSec:true}));if(urgent.length>5)uc.append(el("p","card-sub",`और ${urgent.length-5} ज़रूरी काम बाकी हैं`));}
   else uc.append(el("p","card-sub","सारे ज़रूरी काम हो चुके हैं।"));
   if(c.note)uc.append(el("p","note-line",c.note));
   v.append(uc);
 
-  const ec=el("section","card");ec.append(cardHead("कार्यक्रम","सभी",()=>go("events")));
+  const ec=el("section","card");ec.append(cardHead("कार्यक्रम","See all",()=>go("events")));
   const tl=el("ol","tl");
   sortedEvents().forEach(e=>{const its=allTasks().filter(i=>i.ev===e.id),s=stats(its);const li=el("li"+"");const b=btn("tlb");
     const d=el("div");d.append(el("b",null,e.name),el("span",null,fmtDate(e.date,{day:"numeric",month:"short"})+(e.time?" — "+e.time:"")));
@@ -768,7 +810,7 @@ function eventsView(v){
     hd.append(el("span","w",fmtDate(e.date)+(e.time?" — "+e.time:"")),el("h2",null,e.name));
     if(e.note)hd.append(el("p",null,e.note));
     const meta=el("div","sechead");meta.append(ring(st),el("p",null,its.length?`${st.t-st.d} काम बाकी, ${st.d} पूरे`:"इस कार्यक्रम से कोई काम नहीं जुड़ा है"));hd.append(meta);
-    if(isAdmin){const a=el("div","adm-row");const e1=btn("b","कार्यक्रम बदलें");e1.onclick=()=>openEventEdit(e.id);const e2=btn("b","+ काम");e2.onclick=()=>openItemEdit(null,{ev:e.id});const e3=btn("b","+ मेन्यू");e3.onclick=()=>openMenuEdit(null,{ev:e.id});a.append(e1,e2,e3);hd.append(a);}
+    if(isAdmin){const a=el("div","adm-row");const e1=btn("b","Edit event");e1.onclick=()=>openEventEdit(e.id);const e2=btn("b","+ Task");e2.onclick=()=>openItemEdit(null,{ev:e.id});const e3=btn("b","+ Menu");e3.onclick=()=>openMenuEdit(null,{ev:e.id});a.append(e1,e2,e3);hd.append(a);}
     v.append(hd);
     c.sections.forEach(s=>{const x=its.filter(i=>i.sec===s.id).filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;v.append(grpHead(s.name,its.filter(i=>i.sec===s.id)),listOf(x,{hideEv:true}));});
     if(menus.length){v.append(el("div","grp-h"));const h=v.lastChild;h.append(el("h3",null,"खाने का मेन्यू"));
@@ -805,7 +847,10 @@ function listsView(v){
   const head=el("div","sechead");head.append(ring(st),el("p",null,`${st.d} / ${st.t} पूरे${sec.desc?" — "+sec.desc:""}`));v.append(head);
   tools(v);let shown=0;
   groups.forEach(({g,items})=>{const x=items.filter(match).filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;
-    v.append(grpHead(g.name,items),listOf(x.map(i=>{const pre=g.name+": ";return i.text.startsWith(pre)?Object.assign({},i,{text:i.text.slice(pre.length)}):i;})));shown+=x.length;});
+    const ul=listOf(x.map(i=>{const pre=g.name+": ";return i.text.startsWith(pre)?Object.assign({},i,{text:i.text.slice(pre.length)}):i;}),{drag:reorder&&isAdmin});
+    if(reorder&&isAdmin)enableDrag(ul);
+    v.append(grpHead(g.name,items),ul);shown+=x.length;});
+  if(reorder&&isAdmin)v.insertBefore(Object.assign(el("p","card-sub","⋮⋮ पकड़कर ऊपर-नीचे खींचें। क्रम अपने आप सेव हो जाएगा।"),{style:"padding:2px 6px 0"}),v.children[2]||null);
   if(!shown)v.append(el("p","empty",query?"इस खोज से कुछ नहीं मिला।":hideDone?"इस सूची के सारे काम पूरे हो गए।":"यहाँ अभी कुछ नहीं है।"));
 }
 function teamView(v){
@@ -832,7 +877,7 @@ function personRow(name,items){
 function personView(v){
   const name=view.person,items=allTasks().filter(i=>(state.who[i.id]||"").trim()===name);
   const st=stats(items),head=el("div","sechead");head.append(ring(st),el("p",null,`${st.t-st.d} काम बाकी, ${st.d} पूरे`));
-  if(name){const rn=btn("toggle","नाम बदलें");rn.onclick=()=>openRename(name);head.append(rn);}
+  if(name){const rn=btn("toggle","Rename");rn.onclick=()=>openRename(name);head.append(rn);}
   v.append(head);if(!items.length){v.append(el("p","empty","कोई काम नहीं।"));return;}
   C().sections.forEach(s=>{const all=items.filter(i=>i.sec===s.id),x=all.filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;v.append(grpHead(s.name,all),listOf(x,{hideWho:true}));});
 }
@@ -849,26 +894,26 @@ function adminView(v){
     const off=btn("opt danger");off.append(el("span",null,"एडमिन मोड बंद करें"));off.onclick=()=>{try{localStorage.removeItem(KEY+"-admin");}catch(e){}isAdmin=false;go("home");toast("एडमिन मोड बंद");};card.append(off);
     v.append(card);return;
   }
-  const bb=btn("lnk backlnk","‹ एडमिन");bb.onclick=back;v.append(bb);
+  const bb=btn("lnk backlnk","‹ Back");bb.onclick=back;v.append(bb);
   if(p==="events"){
-    const card=el("section","card");card.append(cardHead("कार्यक्रम","+ नया",()=>openEventEdit(null)));
+    const card=el("section","card");card.append(cardHead("कार्यक्रम","+ Add",()=>openEventEdit(null)));
     sortedEvents().forEach(e=>{const b=btn("ev");b.append(el("span","w",fmtDate(e.date,{day:"numeric",month:"short",year:"numeric"})+(e.time?" — "+e.time:"")),el("b",null,e.name),el("span","chev"));b.onclick=()=>openEventEdit(e.id);card.append(b);});
     v.append(card);
   }else if(p==="sections"){
-    const card=el("section","card");card.append(cardHead("सूचियाँ","+ नई",()=>openSectionEdit(null)));
+    const card=el("section","card");card.append(cardHead("सूचियाँ","+ Add",()=>openSectionEdit(null)));
     c.sections.forEach((s,i)=>{const b=btn("ev");b.append(el("span","w",itemsOfSec(s.id).length+" काम"),el("b",null,s.name));
       const ch=c.groups.filter(g=>g.sec===s.id).map(g=>g.name).join(", ");if(ch)b.append(el("p",null,"समूह: "+ch));b.append(el("span","chev"));b.onclick=()=>openSectionEdit(s.id);card.append(b);});
     v.append(card);
   }else if(p==="menus"){
-    const card=el("section","card");card.append(cardHead("खाने का मेन्यू","+ नया",()=>openMenuEdit(null,{})));
+    const card=el("section","card");card.append(cardHead("खाने का मेन्यू","+ Add",()=>openMenuEdit(null,{})));
     c.menus.forEach(m=>{const e=evById(m.ev);const b=btn("ev");b.append(el("span","w",e?e.name:"किसी कार्यक्रम से नहीं जुड़ा"),el("b",null,m.name));if(m.dishes)b.append(el("p",null,m.dishes));b.append(el("span","chev"));b.onclick=()=>openMenuEdit(m.id);card.append(b);});
     v.append(card);
   }else if(p==="fresh"){
     const card=el("section","card");card.append(cardHead("नई शादी शुरू करें"));
     card.append(el("p","card-sub","किसी और की शादी के लिए यही ऐप इस्तेमाल करें। पहले विकल्प में सारे कार्यक्रम, सूचियाँ और मेन्यू बने रहेंगे, सिर्फ़ टिक, नाम और नोट मिटेंगे। दूसरे विकल्प में सूचियों के नाम और समूह रहेंगे, बाकी सब खाली हो जाएगा।"));
     const box=el("div","pad");
-    const a=btn("b","इसी लिस्ट से नई शादी");twoTap(a,"इसी लिस्ट से नई शादी","पक्का? टिक, नाम, नोट मिट जाएँगे",()=>{state.checked={};state.who={};state.note={};save();toast("तैयार — अब जानकारी भरें");openInfo();});
-    const b2=btn("b danger","बिल्कुल खाली शुरू करें");twoTap(b2,"बिल्कुल खाली शुरू करें","पक्का? सारे कार्यक्रम, काम और मेन्यू हटेंगे",()=>{state.checked={};state.who={};state.note={};edit(c=>{c.events=[];c.items=[];c.menus=[];c.title="शादी की तैयारी";c.date="";c.place="";c.note="";});toast("खाली हो गया");openInfo();});
+    const a=btn("b","New wedding (keep lists)");twoTap(a,"New wedding (keep lists)","Confirm? Ticks, names, notes will be cleared",()=>{state.checked={};state.who={};state.note={};save();toast("तैयार — अब जानकारी भरें");openInfo();});
+    const b2=btn("b danger","Start empty");twoTap(b2,"Start empty","Confirm? Everything will be removed",()=>{state.checked={};state.who={};state.note={};edit(c=>{c.events=[];c.items=[];c.menus=[];c.title="शादी की तैयारी";c.date="";c.place="";c.note="";});toast("खाली हो गया");openInfo();});
     box.append(a,b2);card.append(box);v.append(card);
   }else if(p==="cfg"){
     const card=el("section","card");card.append(cardHead("सेटअप कॉपी / इम्पोर्ट"));
@@ -876,7 +921,7 @@ function adminView(v){
     const box=el("div","pad");const out=el("textarea","movebox");out.readOnly=true;out.hidden=true;
     const cp=btn("b","Copy setup");cp.onclick=async()=>{const x=JSON.parse(JSON.stringify(C()));delete x.adminHash;out.value=JSON.stringify(x);out.hidden=false;out.select();try{await navigator.clipboard.writeText(out.value);toast("कॉपी हो गया");}catch(e){toast("खाने से कॉपी कर लें");}};
     const inp=el("textarea","movebox");inp.placeholder="सेटअप यहाँ पेस्ट करें";
-    const im=btn("b primary","Import setup");twoTap(im,"Import setup","पक्का? मौजूदा सेटअप बदल जाएगा",()=>{let d;try{d=JSON.parse(inp.value.trim());}catch(e){d=null;}
+    const im=btn("b primary","Import setup");twoTap(im,"Import setup","Confirm? Current setup will be replaced",()=>{let d;try{d=JSON.parse(inp.value.trim());}catch(e){d=null;}
       if(!d||!Array.isArray(d.events)||!Array.isArray(d.items)||!Array.isArray(d.sections)){toast("यह सेटअप सही नहीं है");return;}
       const h=C().adminHash;d.adminHash=h;d.groups=d.groups||[];d.menus=d.menus||[];saveCfg(d);render();toast("सेटअप आ गया");});
     box.append(cp,out,inp,im);card.append(box);v.append(card);
@@ -886,8 +931,8 @@ function evOptions(sel,cur){const o0=el("option",null,"किसी कार्
 function selField(label){const w=el("label","fld");w.append(el("span",null,label));const s=el("select");w.append(s);return {wrap:w,input:s};}
 
 /* ---------- sheet ---------- */
-function openSheet(build){const wasOpen=!$("sheet").hidden;const b=$("sheetBody");b.innerHTML="";build(b);$("sheet").hidden=false;document.body.style.overflow="hidden";$("panel").scrollTop=0;if(!wasOpen)history.pushState({sheet:1,v:snap()},"");}
-function closeSheet(fromPop){if($("sheet").hidden)return;$("sheet").hidden=true;document.body.style.overflow="";pendingRender=false;render();if(fromPop!==true&&history.state&&history.state.sheet){ignorePop++;history.back();}}
+function openSheet(build){sheetOnClose=null;const wasOpen=!$("sheet").hidden;const b=$("sheetBody");b.innerHTML="";build(b);$("sheet").hidden=false;document.body.style.overflow="hidden";$("panel").scrollTop=0;if(!wasOpen)history.pushState({sheet:1,v:snap()},"");}
+function closeSheet(fromPop){if($("sheet").hidden)return;if(sheetOnClose){const f=sheetOnClose;sheetOnClose=null;f();}$("sheet").hidden=true;document.body.style.overflow="";pendingRender=false;render();if(fromPop!==true&&history.state&&history.state.sheet){ignorePop++;history.back();}}
 $("scrim").onclick=()=>closeSheet();
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
 function sheetTop(b,eyebrow,title,sub){
@@ -896,22 +941,90 @@ function sheetTop(b,eyebrow,title,sub){
 }
 function field(label,type,value,ph){const w=el("label","fld");w.append(el("span",null,label));const i=el(type==="textarea"?"textarea":"input");if(type!=="textarea")i.type=type||"text";i.value=value||"";if(ph)i.placeholder=ph;w.append(i);return {wrap:w,input:i};}
 function autosize(t){const f=()=>{t.style.height="auto";t.style.height=Math.max(88,t.scrollHeight+2)+"px";};t.addEventListener("input",f);requestAnimationFrame(f);}
+let sheetOnClose=null;
 function openItem(id){
   const it=C().items.find(i=>i.id===id);if(!it)return;
+  let done=!!state.checked[it.id],discard=false;
   openSheet(b=>{
     const e=evById(it.ev),s=secById(it.sec);
     sheetTop(b,[s&&s.name,e&&e.name].filter(Boolean).join(" — "),it.text,it.sub);
     const st=btn("state");
-    const paint=()=>{const on=!!state.checked[it.id];st.className="state"+(on?" on":"");st.innerHTML="";st.append(el("i"));const x=el("span");x.append(el("b",null,on?"पूरा हो गया":"अभी बाकी है"),el("br"),el("small",null,on?"वापस बाकी करने के लिए टैप करें":"काम पूरा होने पर टैप करें"));st.append(x);};
-    paint();st.onclick=()=>{state.checked[it.id]=!state.checked[it.id];save();paint();};b.append(st);
-    const f1=field("ज़िम्मेदार","text",state.who[it.id],"किसके पास है यह काम?");f1.input.setAttribute("list","names");f1.input.setAttribute("autocomplete","off");
-    f1.input.oninput=()=>{state.who[it.id]=f1.input.value;save();};
+    const paint=()=>{st.className="state"+(done?" on":"");st.innerHTML="";st.append(el("i"));const x=el("span");x.append(el("b",null,done?"पूरा हो गया":"अभी बाकी है"),el("br"),el("small",null,done?"वापस बाकी करने के लिए टैप करें":"काम पूरा होने पर टैप करें"));st.append(x);};
+    paint();st.onclick=()=>{done=!done;paint();};b.append(st);
+    const f1=field("ज़िम्मेदार (किसको दिया)","text",state.who[it.id],"नाम लिखें या नीचे से चुनें");f1.input.setAttribute("autocomplete","off");
+    const names=[...new Set(Object.values(state.who).map(x=>(x||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"hi"));
+    const chips=el("div","namechips");
+    const paintChips=()=>{chips.innerHTML="";names.forEach(n=>{const c=btn("nchip"+(f1.input.value.trim()===n?" on":""),n);c.onclick=()=>{f1.input.value=f1.input.value.trim()===n?"":n;paintChips();};chips.append(c);});};
+    f1.input.oninput=paintChips;paintChips();f1.wrap.append(chips);
     const f2=field("संपर्क और नोट","textarea",state.note[it.id],"वेंडर का नाम, फ़ोन नंबर, रेट, एडवांस, पता…");autosize(f2.input);
     const calls=el("div","calls");
-    const showCalls=()=>{calls.innerHTML="";(f2.input.value.match(PHONE)||[]).forEach(n=>{const a=el("a",null,"कॉल करें "+n.trim());a.href="tel:"+n.replace(/[\s-]/g,"");calls.append(a);});};
-    f2.input.addEventListener("input",()=>{state.note[it.id]=f2.input.value;save();showCalls();});showCalls();
+    const showCalls=()=>{calls.innerHTML="";(f2.input.value.match(PHONE)||[]).forEach(n=>{const a=el("a",null,"Call "+n.trim());a.href="tel:"+n.replace(/[\s-]/g,"");calls.append(a);});};
+    f2.input.addEventListener("input",showCalls);showCalls();
     b.append(f1.wrap,f2.wrap,calls);
-    if(isAdmin){const acts=el("div","sh-acts"),eb=btn("b","बदलें / दूसरे कार्यक्रम में");eb.onclick=()=>openItemEdit(it.id);acts.append(eb);b.append(acts);}
+    const commit=()=>{if(discard)return false;const w=f1.input.value.trim(),n=f2.input.value;
+      const ch=w!==((state.who[it.id]||"").trim())||n!==(state.note[it.id]||"")||done!==!!state.checked[it.id];
+      if(!ch)return false;state.who[it.id]=w;state.note[it.id]=n;state.checked[it.id]=done;save();return true;};
+    const m=itemMap(),pre=(it.after||[]).map(x=>m[x]).filter(Boolean),post=dependents(it.id);
+    if(pre.length||post.length||isAdmin){
+      const lk=el("div","links");
+      const sec=(title,list)=>{if(!list.length)return;lk.append(el("div","lh",title));list.forEach(x=>{const r=btn("lrow"+(state.checked[x.id]?" ok":""));r.append(el("i"),el("span",null,x.text));r.onclick=()=>{commit();sheetOnClose=null;openItem(x.id);};lk.append(r);});};
+      sec("पहले ये काम होने चाहिए",pre);sec("इसके बाद ये काम",post);
+      if(isAdmin){const lb=btn("b mini-b","Link tasks");lb.onclick=()=>{commit();sheetOnClose=null;openLinkPicker(it.id);};lk.append(lb);}
+      b.append(lk);
+    }
+    sheetOnClose=()=>{if(commit())toast("Saved");};
+    if(isAdmin){const ad=el("div","sh-acts");const eb=btn("b","Edit");eb.onclick=()=>{commit();sheetOnClose=null;openItemEdit(it.id);};const mg=btn("b","Merge into…");mg.onclick=()=>{commit();sheetOnClose=null;openMergePicker(it.id);};ad.append(eb,mg);b.append(ad);}
+    const acts=el("div","sh-acts sticky");
+    const cn=btn("b","Cancel");cn.onclick=()=>{discard=true;closeSheet();};
+    const sv=btn("b primary","Save");sv.onclick=()=>closeSheet();
+    acts.append(cn,sv);b.append(acts);
+  });
+}
+function pickerList(b,excludeId,selected,multi){
+  const q=field("Search","text","","काम खोजें…");b.append(q.wrap);
+  const box=el("div","plist");b.append(box);
+  const paint=()=>{box.innerHTML="";const s=q.input.value.trim().toLowerCase();
+    C().sections.forEach(sec=>{const its=C().items.filter(i=>i.sec===sec.id&&i.id!==excludeId&&(!s||i.text.toLowerCase().includes(s)));if(!its.length)return;
+      box.append(el("div","lh",sec.name));
+      its.forEach(i=>{const r=btn("prow"+(selected.has(i.id)?" on":""));r.append(el("i"),el("span",null,i.text));
+        r.onclick=()=>{if(multi){selected.has(i.id)?selected.delete(i.id):selected.add(i.id);}else{selected.clear();selected.add(i.id);}paint();};box.append(r);});});};
+  q.input.oninput=paint;paint();
+}
+function openLinkPicker(id){
+  const it=C().items.find(i=>i.id===id);if(!it)return;
+  const sel=new Set(it.after||[]);
+  openSheet(b=>{
+    sheetTop(b,"Link tasks",it.text,"इस काम से पहले कौन-से काम होने ज़रूरी हैं? उन्हें चुनें।");
+    pickerList(b,id,sel,true);
+    const acts=el("div","sh-acts sticky"),cn=btn("b","Cancel"),sv=btn("b primary","Save");
+    cn.onclick=()=>closeSheet();
+    sv.onclick=()=>{const bad=[...sel].find(x=>reaches(x,id));if(bad){toast("यह लिंक गोल घेरा बना देगा: "+short(itemMap()[bad].text,24));return;}
+      edit(c=>{const x=c.items.find(i=>i.id===id);x.after=[...sel];});closeSheet();toast("Links saved");};
+    acts.append(cn,sv);b.append(acts);
+  });
+}
+function mergeItems(fromId,intoId){
+  const a=(state.who[fromId]||"").trim(),bw=(state.who[intoId]||"").trim();
+  if(a&&a!==bw)state.who[intoId]=bw?bw+", "+a:a;
+  const na=state.note[fromId]||"",nb=state.note[intoId]||"";if(na.trim())state.note[intoId]=nb.trim()?nb+"\n"+na:na;
+  if(state.checked[fromId]&&!state.checked[intoId])state.checked[intoId]=true;
+  delete state.who[fromId];delete state.note[fromId];delete state.checked[fromId];
+  edit(c=>{const f=c.items.find(i=>i.id===fromId),t=c.items.find(i=>i.id===intoId);if(!f||!t)return;
+    t.after=[...new Set([...(t.after||[]),...(f.after||[])])].filter(x=>x!==intoId&&x!==fromId);
+    if(!t.ev&&f.ev)t.ev=f.ev;
+    c.items.forEach(i=>{if(i.after)i.after=[...new Set(i.after.map(x=>x===fromId?intoId:x))].filter(x=>x!==i.id);});
+    c.items=c.items.filter(i=>i.id!==fromId);});
+}
+function openMergePicker(id){
+  const it=C().items.find(i=>i.id===id);if(!it)return;
+  const sel=new Set();
+  openSheet(b=>{
+    sheetTop(b,"Merge",it.text,"यह काम किसी दूसरे काम में मिला दें। ज़िम्मेदार, नोट और लिंक उसी में आ जाएँगे और यह वाला हट जाएगा।");
+    pickerList(b,id,sel,false);
+    const acts=el("div","sh-acts sticky"),cn=btn("b","Cancel"),sv=btn("b primary","Merge");
+    cn.onclick=()=>closeSheet();
+    twoTap(sv,"Merge","Confirm merge?",()=>{const t=[...sel][0];if(!t){toast("पहले एक काम चुनें");return;}mergeItems(id,t);closeSheet();toast("Merged");});
+    acts.append(cn,sv);b.append(acts);
   });
 }
 function openItemEdit(id,def){
@@ -927,13 +1040,13 @@ function openItemEdit(id,def){
     const fn=field("नए समूह का नाम","text","");fn.wrap.hidden=fg.input.value!=="__new";fg.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});fs.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});
     const ft=selField("प्राथमिकता");[["","सामान्य"],["urgent","तुरंत"],["soon","जल्दी"]].forEach(([v,l])=>{const o=el("option",null,l);o.value=v;ft.input.append(o);});ft.input.value=it.tag||"";
     b.append(f1.wrap,f2.wrap,fe.wrap,fs.wrap,fg.wrap,fn.wrap,ft.wrap);
-    const acts=el("div","sh-acts"),sv=btn("b primary","सेव करें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const text=f1.input.value.trim();if(!text){f1.input.focus();return;}
       edit(c=>{let grp=fg.input.value;if(grp==="__new"){const n=fn.input.value.trim()||"अन्य";grp=uid("g");c.groups.push({id:grp,sec:fs.input.value,name:n});}
-        const o={id:it.id,sec:fs.input.value,grp,text,sub:f2.input.value.trim(),tag:ft.input.value,ev:fe.input.value};
+        const o={id:it.id,sec:fs.input.value,grp,text,sub:f2.input.value.trim(),tag:ft.input.value,ev:fe.input.value,after:it.after||[]};
         const i=c.items.findIndex(x=>x.id===it.id);if(i>=0)c.items[i]=o;else c.items.push(o);});
       closeSheet();toast("सेव हो गया");};
-    if(id){const db=btn("b danger","हटाएँ");twoTap(db,"हटाएँ","पक्का हटाएँ?",()=>{edit(c=>{c.items=c.items.filter(x=>x.id!==id);});closeSheet();toast("हटा दिया");});acts.append(db);}
+    if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.items=c.items.filter(x=>x.id!==id);});closeSheet();toast("हटा दिया");});acts.append(db);}
     acts.append(sv);b.append(acts);if(!id)setTimeout(()=>f1.input.focus(),60);
   });
 }
@@ -943,10 +1056,10 @@ function openEventEdit(id){
     sheetTop(b,"एडमिन",id?"कार्यक्रम बदलें":"नया कार्यक्रम","");
     const f1=field("कार्यक्रम का नाम","text",e.name,"जैसे: हल्दी, मायरा, फेरे"),f2=field("तारीख","date",e.date),f3=field("समय","text",e.time,"जैसे: सायं 5:15"),f4=field("नोट","text",e.note,"जैसे: गोधूली बेला");
     b.append(f1.wrap,f2.wrap,f3.wrap,f4.wrap);
-    const acts=el("div","sh-acts"),sv=btn("b primary","सेव करें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const name=f1.input.value.trim();if(!name){f1.input.focus();return;}
       edit(c=>{const o={id:e.id,name,date:f2.input.value,time:f3.input.value.trim(),note:f4.input.value.trim()};const i=c.events.findIndex(x=>x.id===e.id);if(i>=0)c.events[i]=o;else c.events.push(o);});closeSheet();toast("सेव हो गया");};
-    if(id){const db=btn("b danger","हटाएँ");twoTap(db,"हटाएँ","पक्का? जुड़े काम बने रहेंगे",()=>{edit(c=>{c.events=c.events.filter(x=>x.id!==id);c.items.forEach(i=>{if(i.ev===id)i.ev="";});c.menus.forEach(m=>{if(m.ev===id)m.ev="";});});if(view.ev===id)view.ev=null;closeSheet();});acts.append(db);}
+    if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.events=c.events.filter(x=>x.id!==id);c.items.forEach(i=>{if(i.ev===id)i.ev="";});c.menus.forEach(m=>{if(m.ev===id)m.ev="";});});if(view.ev===id)view.ev=null;closeSheet();});acts.append(db);}
     acts.append(sv);b.append(acts);
   });
 }
@@ -957,10 +1070,10 @@ function openMenuEdit(id,def){
     const f1=field("खाना","text",m.name,"जैसे: नाश्ता, दोपहर का खाना"),fe=selField("किस कार्यक्रम के लिए");evOptions(fe.input,m.ev);
     const f3=field("क्या-क्या बनेगा (कॉमा से अलग करें)","textarea",m.dishes);autosize(f3.input);
     b.append(f1.wrap,fe.wrap,f3.wrap);
-    const acts=el("div","sh-acts"),sv=btn("b primary","सेव करें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const name=f1.input.value.trim();if(!name){f1.input.focus();return;}
       edit(c=>{const o={id:m.id,ev:fe.input.value,name,dishes:f3.input.value.trim()};const i=c.menus.findIndex(x=>x.id===m.id);if(i>=0)c.menus[i]=o;else c.menus.push(o);});closeSheet();toast("सेव हो गया");};
-    if(id){const db=btn("b danger","हटाएँ");twoTap(db,"हटाएँ","पक्का हटाएँ?",()=>{edit(c=>{c.menus=c.menus.filter(x=>x.id!==id);});closeSheet();});acts.append(db);}
+    if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.menus=c.menus.filter(x=>x.id!==id);});closeSheet();});acts.append(db);}
     acts.append(sv);b.append(acts);
   });
 }
@@ -974,15 +1087,15 @@ function openSectionEdit(id){
     const gwrap=el("div","glist");gl.append(gwrap);
     let gs=c.groups.filter(g=>g.sec===s.id).map(g=>Object.assign({},g));
     const paint=()=>{gwrap.innerHTML="";gs.forEach((g,i)=>{const r=el("div","grow");const inp=el("input");inp.value=g.name;inp.oninput=()=>{g.name=inp.value;};
-      const n=itemsOfSec(s.id).filter(x=>x.grp===g.id).length;const del=btn("b danger mini-b","हटाएँ");
+      const n=itemsOfSec(s.id).filter(x=>x.grp===g.id).length;const del=btn("b danger mini-b","Delete");
       del.onclick=()=>{if(n){toast(`इसमें ${n} काम हैं, पहले उन्हें दूसरे समूह में डालें`);return;}gs.splice(i,1);paint();};r.append(inp,el("small",null,n+" काम"),del);gwrap.append(r);});
-      const add=btn("b","+ समूह जोड़ें");add.onclick=()=>{gs.push({id:uid("g"),sec:s.id,name:"नया समूह"});paint();};gwrap.append(add);};
+      const add=btn("b","+ Add group");add.onclick=()=>{gs.push({id:uid("g"),sec:s.id,name:"नया समूह"});paint();};gwrap.append(add);};
     paint();b.append(gl);
-    const acts=el("div","sh-acts"),sv=btn("b primary","सेव करें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const name=f1.input.value.trim();if(!name){f1.input.focus();return;}
       edit(c=>{const o={id:s.id,name,desc:f2.input.value.trim()};const i=c.sections.findIndex(x=>x.id===s.id);if(i>=0)c.sections[i]=o;else c.sections.push(o);
         c.groups=c.groups.filter(g=>g.sec!==s.id).concat(gs.map(g=>({id:g.id,sec:s.id,name:g.name.trim()||"समूह"})));});closeSheet();toast("सेव हो गया");};
-    if(id){const db=btn("b danger","हटाएँ");twoTap(db,"हटाएँ","पक्का? इसके सारे काम भी हटेंगे",()=>{edit(c=>{c.sections=c.sections.filter(x=>x.id!==id);c.groups=c.groups.filter(g=>g.sec!==id);c.items=c.items.filter(x=>x.sec!==id);});closeSheet();});acts.append(db);}
+    if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.sections=c.sections.filter(x=>x.id!==id);c.groups=c.groups.filter(g=>g.sec!==id);c.items=c.items.filter(x=>x.sec!==id);});closeSheet();});acts.append(db);}
     acts.append(sv);b.append(acts);
   });
 }
@@ -992,7 +1105,7 @@ function openInfo(){
     sheetTop(b,"एडमिन","शादी की जानकारी","ऊपर होम स्क्रीन पर यही दिखेगा।");
     const f1=field("ऊपर क्या लिखा दिखे","text",c.title,"जैसे: शादी की तैयारी, या दूल्हा-दुल्हन के नाम"),f2=field("मुख्य तारीख (शादी)","date",c.date),f3=field("जगह","text",c.place),f4=field("ज़रूरी सूचना","textarea",c.note);autosize(f4.input);
     b.append(f1.wrap,f2.wrap,f3.wrap,f4.wrap);
-    const acts=el("div","sh-acts"),sv=btn("b primary","सेव करें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{edit(x=>{x.title=f1.input.value.trim()||"शादी की तैयारी";x.date=f2.input.value;x.place=f3.input.value.trim();x.note=f4.input.value.trim();});closeSheet();toast("सेव हो गया");};
     acts.append(sv);b.append(acts);
   });
@@ -1001,7 +1114,7 @@ function openCode(){
   openSheet(b=>{
     sheetTop(b,"एडमिन","एडमिन कोड बदलें","नया कोड सबसे अलग रखें। फ़ैमिली कोड वही रहेगा।");
     const f=field("नया एडमिन कोड","text","");b.append(f.wrap);
-    const acts=el("div","sh-acts"),sv=btn("b primary","सेव करें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=async()=>{const v=f.input.value.trim();if(v.length<4){toast("कम से कम 4 अक्षर");return;}const h=await sha(v);edit(c=>{c.adminHash=h;});try{localStorage.setItem(KEY+"-admin",h);}catch(e){}closeSheet();toast("एडमिन कोड बदल गया");};
     acts.append(sv);b.append(acts);
   });
@@ -1010,7 +1123,7 @@ function openAdminLogin(){
   openSheet(b=>{
     sheetTop(b,"एडमिन","एडमिन पैनल","कार्यक्रम, सूचियाँ और मेन्यू बदलने के लिए एडमिन कोड डालें।");
     const f=field("एडमिन कोड","password","");b.append(f.wrap);
-    const acts=el("div","sh-acts"),sv=btn("b primary","खोलें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Open");
     const go2=async()=>{const h=await sha(f.input.value.trim());if(h!==C().adminHash){toast("कोड सही नहीं है");return;}try{localStorage.setItem(KEY+"-admin",h);}catch(e){}isAdmin=true;closeSheet();go("admin");toast("एडमिन मोड चालू");};
     sv.onclick=go2;f.input.onkeydown=e=>{if(e.key==="Enter")go2();};acts.append(sv);b.append(acts);setTimeout(()=>f.input.focus(),60);
   });
@@ -1019,7 +1132,7 @@ function openRename(name){
   openSheet(b=>{
     sheetTop(b,"टीम","नाम बदलें","नया नाम इनके सभी कामों में बदल जाएगा। खाली छोड़कर सेव करेंगे तो यह नाम सभी कामों से हट जाएगा।");
     const f=field("नाम","text",name);b.append(f.wrap);
-    const acts=el("div","sh-acts"),sv=btn("b primary","सेव करें");
+    const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const nv=f.input.value.trim();Object.keys(state.who).forEach(k=>{if((state.who[k]||"").trim()===name)state.who[k]=nv;});save();view.person=nv||null;closeSheet();};
     acts.append(sv);b.append(acts);
   });
@@ -1029,7 +1142,7 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=
 function openInstall(){
   openSheet(b=>{
     sheetTop(b,"ऐप","होम स्क्रीन पर जोड़ें","इसके बाद यह लिस्ट फ़ोन में एक ऐप की तरह खुलेगी।");
-    if(installEvt){const i=btn("b primary","अभी इंस्टॉल करें");i.style.cssText="width:100%;margin-top:18px";i.onclick=async()=>{installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;closeSheet();};b.append(i);}
+    if(installEvt){const i=btn("b primary","Install now");i.style.cssText="width:100%;margin-top:18px";i.onclick=async()=>{installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;closeSheet();};b.append(i);}
     const p1=el("p","hint");p1.innerHTML="<b>Android (Chrome):</b> ऊपर दाईं ओर ⋮ मेनू → <b>Add to Home screen</b> या <b>Install app</b>।";
     const p2=el("p","hint");p2.innerHTML="<b>iPhone (Safari):</b> नीचे Share बटन → <b>Add to Home Screen</b>।";
     b.append(p1,p2);
@@ -1091,16 +1204,16 @@ function gate(){
   const open=()=>{if(app.hidden){lock.hidden=true;app.hidden=false;render();}};
   const shut=t=>{app.hidden=true;lock.hidden=false;msg.textContent=t||"";};
   if(!SHEET_URL){open();return;}
-  if(badCode){okFlag(false);checking=false;b.disabled=false;b.textContent="खोलें";shut(code?"यह कोड सही नहीं है। दोबारा देखकर डालें।":"");return;}
+  if(badCode){okFlag(false);checking=false;b.disabled=false;b.textContent="Open";shut(code?"यह कोड सही नहीं है। दोबारा देखकर डालें।":"");return;}
   if(ready){okFlag(true);checking=false;open();return;}
   if(okFlag()){open();return;}
-  if(offline){checking=false;b.disabled=false;b.textContent="खोलें";shut("इंटरनेट नहीं मिल रहा। नेटवर्क देखकर दोबारा कोशिश करें।");return;}
+  if(offline){checking=false;b.disabled=false;b.textContent="Open";shut("इंटरनेट नहीं मिल रहा। नेटवर्क देखकर दोबारा कोशिश करें।");return;}
   shut(checking?"कोड जाँचा जा रहा है…":"");
 }
 $("lockBtn").onclick=()=>{
   const v=$("lockIn").value.trim();if(!v){$("lockIn").focus();return;}
   code=v;try{localStorage.setItem(KEY+"-code",v);}catch(e){}
-  checking=true;$("lockBtn").disabled=true;$("lockBtn").textContent="जाँच रहे हैं…";
+  checking=true;$("lockBtn").disabled=true;$("lockBtn").textContent="Checking…";
   badCode=false;offline=false;ready=false;synced={items:{},custom:{}};remote={items:null,custom:null};connect();gate();
 };
 $("lockIn").onkeydown=e=>{if(e.key==="Enter")$("lockBtn").click();};
