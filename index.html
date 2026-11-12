@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>शादी की तैयारी</title>
+<title>Wedding Planner</title>
 <meta name="theme-color" content="#F7F3EC" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121010" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="शादी">
+<meta name="apple-mobile-web-app-title" content="Wedding">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -293,21 +293,21 @@ button{cursor:pointer}
   <div class="lockbox">
     <div class="mono">शुभ</div>
     <p class="shri">॥ श्री गणेशाय नमः ॥</p>
-    <h1>शादी की तैयारी</h1>
-    <p class="date">परिवार के लिए</p>
+    <h1>Wedding Planner</h1>
+    <p class="date">For the family</p>
     <div class="rule"></div>
-    <label for="lockIn">फ़ैमिली कोड</label>
+    <label for="lockIn">Family code</label>
     <input id="lockIn" type="password" autocomplete="current-password" placeholder="••••••">
     <button type="button" class="b primary" id="lockBtn">Open</button>
     <p id="lockMsg" class="lockmsg" role="alert"></p>
   </div>
 </div>
 <div id="app" class="app" hidden>
-  <header class="topbar"><button type="button" class="back" id="back" hidden>‹ टीम</button><h1 id="title">शादी की तैयारी</h1><span id="sync" class="sdot">…</span></header>
-  <nav id="seg" class="seg" aria-label="सेक्शन" hidden></nav>
+  <header class="topbar"><button type="button" class="back" id="back" hidden>‹ Team</button><h1 id="title">Wedding Planner</h1><span id="sync" class="sdot">…</span></header>
+  <nav id="seg" class="seg" aria-label="Sections" hidden></nav>
   <main id="view" class="view"></main>
-  <button type="button" class="fab" id="fab" aria-label="नया जोड़ें" hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-  <nav class="nav" aria-label="मुख्य"><div id="nav"></div></nav>
+  <button type="button" class="fab" id="fab" aria-label="Add new" hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <nav class="nav" aria-label="Main"><div id="nav"></div></nav>
 </div>
 <div id="sheet" class="sheet" hidden><div class="scrim" id="scrim"></div><div class="panel" role="dialog" aria-modal="true" id="panel"><div class="grab"></div><div id="sheetBody"></div></div></div>
 <datalist id="names"></datalist>
@@ -566,11 +566,11 @@ document.addEventListener("focusout",()=>setTimeout(()=>{if(pendingRender&&!edit
 function setStatus(){
   const s=$("sync");if(!s)return;
   let t,l,cls="sdot";
-  if(!SHEET_URL){t="इसी फ़ोन में";l="लिस्ट सिर्फ़ इसी फ़ोन में सेव हो रही है";}
-  else if(badCode){t="कोड";l="फ़ैमिली कोड गलत है";cls+=" off";}
-  else if(offline){t="ऑफ़लाइन";l="इंटरनेट नहीं है, बदलाव बाद में सेव होंगे";cls+=" off";}
-  else if(ready){t="सिंक";l="सबके साथ जुड़ी हुई लिस्ट";cls+=" on";}
-  else {t="…";l="जुड़ रहा है";}
+  if(!SHEET_URL){t="This phone";l="Saved on this phone only";}
+  else if(badCode){t="Code";l="Family code is wrong";cls+=" off";}
+  else if(offline){t="Offline";l="No internet — changes will save later";cls+=" off";}
+  else if(ready){t="Synced";l="Shared list is up to date";cls+=" on";}
+  else {t="…";l="Connecting…";}
   s.textContent=t;s.className=cls;s.title=l;s.setAttribute("aria-label",l);statusText=l;
   gate();
 }
@@ -636,13 +636,13 @@ const EVMAP={"card-3":"e1","kharid-6":"e2","kharid-18":"e4","book-13":"e5","khar
  "kharid-11":"e6","book-12":"e7","kharid-9":"e7","book-7":"e9","book-8":"e9","book-10":"e9","book-20":"e9","kharid-16":"e9","kharid-0":"e9","book-3":"e9",
  "dulha-0-0":"e10","dulha-1-2":"e10","kharid-2":"e10"};
 const MENU_EV=["e3","e8","e5","e7","e8","e9","e9","e9","e9"];
-const SEC_NAMES={book:"बुकिंग",card:"कार्ड व मेहमान",kharid:"खरीदारी",dulha:"दूल्हा-दुल्हन",dance:"डांस",samai:"समाई",mayra:"मायरा"};
+const SEC_NAMES={book:"Booking",card:"Cards & Guests",kharid:"Shopping",dulha:"Groom & Bride",dance:"Dance",samai:"Samai",mayra:"Mayra"};
 function buildDefault(){
   const ed=id=>{const e=state.edits[id];return typeof e==="string"&&e?e:null;};
-  const c={title:"शादी की तैयारी",place:"भीलवाड़ा",date:"2027-02-11",note:"11 फ़रवरी अबूझ सावा है, इस दिन बहुत शादियाँ होती हैं। बुकिंग जल्दी करें और हर एडवांस की रसीद लें।",
+  const c={title:"Wedding Planner",place:"भीलवाड़ा",date:"2027-02-11",note:"11 फ़रवरी अबूझ सावा है, इस दिन बहुत शादियाँ होती हैं। बुकिंग जल्दी करें और हर एडवांस की रसीद लें।",
     adminHash:DEFAULT_ADMIN,events:[],sections:[],groups:[],items:[],menus:[]};
   DEF_EVENTS.forEach(([id,name,date,time,note],i)=>{const o=state.edits["program-m"+i];c.events.push({id,name:(o&&o.what)||name,date,time,note});});
-  (state.custom.program||[]).forEach(p=>{if(state.hidden[p.id])return;const o=state.edits[p.id]||{};c.events.push({id:p.id,name:o.what||p.what||"कार्यक्रम",date:"",time:o.when||p.when||"",note:o.dishes||""});});
+  (state.custom.program||[]).forEach(p=>{if(state.hidden[p.id])return;const o=state.edits[p.id]||{};c.events.push({id:p.id,name:o.what||p.what||"Events",date:"",time:o.when||p.when||"",note:o.dishes||""});});
   ["book","card","kharid","dulha","dance","samai","mayra"].forEach(sid=>{
     const s=SEC[sid];if(!s)return;
     c.sections.push({id:sid,name:SEC_NAMES[sid],desc:s.desc||""});
@@ -652,11 +652,11 @@ function buildDefault(){
     const G=GROUPS[sid],used=new Set();
     if(G)G.forEach(([t,idx],gi)=>{const g=sid+"-g"+gi;c.groups.push({id:g,sec:sid,name:t});idx.forEach(i=>{if(s.items[i]){used.add(i);add(`${sid}-${i}`,s.items[i],g);}});});
     const rest=(s.items||[]).map((it,i)=>[it,i]).filter(x=>!used.has(x[1])),cust=state.custom[sid]||[];
-    if(rest.length||cust.length){const g=sid+"-gx";c.groups.push({id:g,sec:sid,name:G||s.events?"अन्य":SEC_NAMES[sid]});rest.forEach(([it,i])=>add(`${sid}-${i}`,it,g));cust.forEach(cu=>add(cu.id,[cu.text],g));}
+    if(rest.length||cust.length){const g=sid+"-gx";c.groups.push({id:g,sec:sid,name:G||s.events?"Other":SEC_NAMES[sid]});rest.forEach(([it,i])=>add(`${sid}-${i}`,it,g));cust.forEach(cu=>add(cu.id,[cu.text],g));}
   });
   const K=SEC.khana;
   K.events.forEach((m,i)=>{const id="khana-m"+i;if(state.hidden[id])return;const o=state.edits[id]||{};c.menus.push({id,ev:MENU_EV[i]||"",name:o.what||m.what,dishes:o.dishes!=null?o.dishes:m.items.map(x=>x[0]).join(", ")});});
-  (state.custom.menu||[]).forEach(m=>{if(state.hidden[m.id])return;const o=state.edits[m.id]||{};c.menus.push({id:m.id,ev:"",name:o.what||m.what||"खाना",dishes:o.dishes||m.dishes||""});});
+  (state.custom.menu||[]).forEach(m=>{if(state.hidden[m.id])return;const o=state.edits[m.id]||{};c.menus.push({id:m.id,ev:"",name:o.what||m.what||"Meal",dishes:o.dishes||m.dishes||""});});
   return c;
 }
 const SEC={};DATA.forEach(s=>SEC[s.id]=s);
@@ -664,7 +664,12 @@ let _def=null;
 function C(){const x=state.custom.__cfg;if(x&&x[0]&&x[0].cfg)return x[0].cfg;if(!_def)_def=buildDefault();return _def;}
 function saveCfg(c){state.custom.__cfg=[{id:"cfg",cfg:c,t:Date.now()}];_def=null;save();}
 function edit(fn){const c=JSON.parse(JSON.stringify(C()));fn(c);saveCfg(c);render();}
-function ensureCfg(){if(state.custom.__cfg&&state.custom.__cfg[0])return;if(SHEET_URL&&!ready)return;saveCfg(C());}
+const LEGACY={"बुकिंग":"Booking","कार्ड व मेहमान":"Cards & Guests","खरीदारी":"Shopping","दूल्हा-दुल्हन":"Groom & Bride","डांस":"Dance","समाई":"Samai","मायरा":"Mayra"};
+function migrateCfg(){const x=state.custom.__cfg;if(!x||!x[0]||!x[0].cfg)return false;const c=x[0].cfg;let ch=false;
+  c.sections.forEach(s=>{if(LEGACY[s.name]){s.name=LEGACY[s.name];ch=true;}});
+  if(c.title==="शादी की तैयारी"){c.title="Wedding Planner";ch=true;}
+  if(ch){saveCfg(c);}return ch;}
+function ensureCfg(){if(state.custom.__cfg&&state.custom.__cfg[0]){if(ready||!SHEET_URL)migrateCfg();return;}if(SHEET_URL&&!ready)return;saveCfg(C());}
 
 /* ---------- model helpers ---------- */
 const evById=id=>C().events.find(e=>e.id===id);
@@ -673,13 +678,13 @@ function sortedEvents(){return C().events.map((e,i)=>[e,i]).sort((a,b)=>(a[0].da
 function itemsOfSec(sid){return C().items.filter(i=>i.sec===sid);}
 function groupsOfSec(sid){const c=C(),its=itemsOfSec(sid),gids=new Set(c.groups.filter(g=>g.sec===sid).map(g=>g.id));
   const out=c.groups.filter(g=>g.sec===sid).map(g=>({g,items:its.filter(i=>i.grp===g.id)}));
-  const orphan=its.filter(i=>!gids.has(i.grp));if(orphan.length)out.push({g:{id:"",sec:sid,name:"अन्य"},items:orphan});return out;}
+  const orphan=its.filter(i=>!gids.has(i.grp));if(orphan.length)out.push({g:{id:"",sec:sid,name:"Other"},items:orphan});return out;}
 function allTasks(){return C().items;}
 function stats(items){return {t:items.length,d:items.filter(i=>state.checked[i.id]).length};}
 function today(){const n=new Date();n.setHours(0,0,0,0);return n;}
 function dOf(s){return s?new Date(s+"T00:00:00"):null;}
 function daysTo(s){const d=dOf(s);return d?Math.round((d-today())/864e5):null;}
-function fmtDate(s,opt){const d=dOf(s);if(!d)return "तारीख तय नहीं";try{return d.toLocaleDateString("hi-IN",opt||{weekday:"long",day:"numeric",month:"long"});}catch(e){return s;}}
+function fmtDate(s,opt){const d=dOf(s);if(!d)return "Date not set";try{return d.toLocaleDateString("en-IN",opt||{weekday:"long",day:"numeric",month:"long"});}catch(e){return s;}}
 function nextEvent(){return sortedEvents().find(e=>e.date&&daysTo(e.date)>=0);}
 function match(i){if(!query)return true;const q=query.trim().toLowerCase();return [i.text,i.sub,state.who[i.id]||"",state.note[i.id]||""].join(" ").toLowerCase().includes(q);}
 
@@ -707,17 +712,17 @@ function rowEl(it,opt={}){
   const li=el("li","row"+(done?" done":""));li.dataset.id=it.id;
   if(opt.drag){const hd=el("span","grip");hd.setAttribute("aria-hidden","true");hd.textContent="⋮⋮";li.append(hd);}
   const ck=btn("ck");ck.setAttribute("role","checkbox");ck.setAttribute("aria-checked",done);ck.setAttribute("aria-label",it.text);ck.append(el("i"));
-  ck.onclick=()=>{state.checked[it.id]=!done;save();render();if(!done)toast("पूरा हुआ");};
+  ck.onclick=()=>{state.checked[it.id]=!done;save();render();if(!done)toast("Done");};
   const b=btn("rb"),tx=el("span","tx");
   tx.append(el("span","rt",it.text));
   const sub=[opt.showSec?(secById(it.sec)||{}).name:"",it.sub].filter(Boolean).join(" — ");
   if(sub)tx.append(el("span","rs",sub));
   const m=el("span","rm");
-  if(it.tag&&!done)m.append(el("span","pill "+it.tag,it.tag==="urgent"?"तुरंत":"जल्दी"));
-  const pend=pendingDeps(it);if(pend.length&&!done)m.append(el("span","pill block","पहले: "+short(pend[0].text,20)+(pend.length>1?" +"+(pend.length-1):"")));
+  if(it.tag&&!done)m.append(el("span","pill "+it.tag,it.tag==="urgent"?"Urgent":"Soon"));
+  const pend=pendingDeps(it);if(pend.length&&!done)m.append(el("span","pill block","Needs: "+short(pend[0].text,20)+(pend.length>1?" +"+(pend.length-1):"")));
   if(it.ev&&!opt.hideEv){const e=evById(it.ev);if(e)m.append(el("span","pill evt",e.name.length>18?e.name.slice(0,17)+"…":e.name));}
   const w=(state.who[it.id]||"").trim();if(w&&!opt.hideWho)m.append(el("span","pill who",w));
-  if((state.note[it.id]||"").trim())m.append(el("span","pill note","नोट"));
+  if((state.note[it.id]||"").trim())m.append(el("span","pill note","Note"));
   tx.append(m);b.append(tx,el("span","chev"));
   b.onclick=()=>openItem(it.id);
   li.append(ck,b);return li;
@@ -747,7 +752,7 @@ function ring(st){const r=el("div","ring");r.style.setProperty("--p",st.t?Math.r
 function miniBar(st){const m=el("span","mini"),i=el("i");i.style.width=(st.t?st.d/st.t*100:0)+"%";m.append(i);return m;}
 function tools(v){
   const t=el("div","tools"),s=el("label","search");s.append(svg(ICON.search));
-  const inp=el("input");inp.type="search";inp.placeholder="खोजें — नाम, काम, नोट";inp.value=query;inp.setAttribute("aria-label","खोजें");
+  const inp=el("input");inp.type="search";inp.placeholder="Search name, task, note";inp.value=query;inp.setAttribute("aria-label","Search");
   inp.oninput=()=>{query=inp.value;const p=inp.selectionStart;renderView();const n=document.querySelector(".search input");if(n){n.focus();try{n.setSelectionRange(p,p);}catch(e){}}};
   s.append(inp);
   const tg=btn("toggle","Hide done");tg.setAttribute("aria-pressed",hideDone);tg.onclick=()=>{hideDone=!hideDone;saveUI();renderView();};
@@ -757,7 +762,7 @@ function tools(v){
 }
 function listOf(items,opt){const ul=el("ul","list");items.forEach(i=>ul.append(rowEl(i,opt)));return ul;}
 function grpHead(title,items){const gs=stats(items),h=el("div","grp-h");h.append(el("h3",null,title),el("span","cnt"+(gs.t&&gs.d===gs.t?" full":""),`${gs.d}/${gs.t}`));return h;}
-function evMeta(e){const d=daysTo(e.date);return [e.time,d===0?"आज":d===1?"कल":d>1?`${d} दिन में`:""].filter(Boolean).join(" — ");}
+function evMeta(e){const d=daysTo(e.date);return [e.time,d===0?"Today":d===1?"Tomorrow":d>1?`in ${d} days`:""].filter(Boolean).join(" — ");}
 
 /* ---------- views ---------- */
 function homeView(v){
@@ -765,32 +770,32 @@ function homeView(v){
   const urgent=tasks.filter(i=>i.tag==="urgent"&&!state.checked[i.id]);
   const days=daysTo(c.date);
   const h=el("section","hero");
-  h.append(Object.assign(el("div","mono"),{innerHTML:"शुभ"}),el("p","shri","॥ श्री गणेशाय नमः ॥"),el("h2","names",c.title||"शादी की तैयारी"));
+  h.append(Object.assign(el("div","mono"),{innerHTML:"शुभ"}),el("p","shri","॥ श्री गणेशाय नमः ॥"),el("h2","names",c.title||"Wedding Planner"));
   const dl=el("p","date");dl.append(document.createTextNode(c.date?fmtDate(c.date,{day:"numeric",month:"long",year:"numeric"}):""));if(c.place){if(c.date)dl.append(el("b",null,"|"));dl.append(document.createTextNode(c.place));}h.append(dl);
   const ct=el("div","count");
-  [[days!=null&&days>=0?days:"–","दिन बाकी"],[pct+"%","तैयारी पूरी"],[urgent.length,"ज़रूरी बाकी"]].forEach(([n,l],i)=>{if(i)ct.append(el("span","sep"));const d=el("div");d.append(el("b",null,String(n)),el("span",null,l));ct.append(d);});
+  [[days!=null&&days>=0?days:"–","days left"],[pct+"%","prep done"],[urgent.length,"urgent left"]].forEach(([n,l],i)=>{if(i)ct.append(el("span","sep"));const d=el("div");d.append(el("b",null,String(n)),el("span",null,l));ct.append(d);});
   const bar=el("div","hbar"),bi=el("i");bi.style.width=pct+"%";bar.append(bi);h.append(ct,bar);v.append(h);
 
   const ne=nextEvent();
   if(ne){
     const its=allTasks().filter(i=>i.ev===ne.id),s=stats(its),menus=c.menus.filter(m=>m.ev===ne.id);
-    const nc=el("section","card next");nc.append(cardHead("अगला कार्यक्रम","Open",()=>go("events",{ev:ne.id})));
+    const nc=el("section","card next");nc.append(cardHead("Next event","Open",()=>go("events",{ev:ne.id})));
     const b=btn("nextbody");b.onclick=()=>go("events",{ev:ne.id});
     b.append(el("span","w",fmtDate(ne.date)+(ne.time?" — "+ne.time:"")),el("b",null,ne.name));
     const meta=el("span","rm");
-    const dd=daysTo(ne.date);meta.append(el("span","pill evt",dd===0?"आज":dd===1?"कल":dd+" दिन में"));
-    if(s.t)meta.append(el("span","pill "+(s.t-s.d?"urgent":"done"),s.t-s.d?`${s.t-s.d} काम बाकी`:"सब तैयार"));
-    if(menus.length)meta.append(el("span","pill note","मेन्यू: "+menus.map(m=>m.name).join(", ")));
+    const dd=daysTo(ne.date);meta.append(el("span","pill evt",dd===0?"Today":dd===1?"Tomorrow":"in "+dd+" days"));
+    if(s.t)meta.append(el("span","pill "+(s.t-s.d?"urgent":"done"),s.t-s.d?`${s.t-s.d} left`:"All ready"));
+    if(menus.length)meta.append(el("span","pill note","Menu: "+menus.map(m=>m.name).join(", ")));
     b.append(meta);nc.append(b);v.append(nc);
   }
 
-  const uc=el("section","card");uc.append(cardHead("सबसे ज़रूरी","See all",()=>go("lists",{sec:(urgent[0]||{}).sec||view.sec})));
-  if(urgent.length){uc.append(listOf(urgent.slice(0,5),{showSec:true}));if(urgent.length>5)uc.append(el("p","card-sub",`और ${urgent.length-5} ज़रूरी काम बाकी हैं`));}
-  else uc.append(el("p","card-sub","सारे ज़रूरी काम हो चुके हैं।"));
+  const uc=el("section","card");uc.append(cardHead("Most urgent","See all",()=>go("lists",{sec:(urgent[0]||{}).sec||view.sec})));
+  if(urgent.length){uc.append(listOf(urgent.slice(0,5),{showSec:true}));if(urgent.length>5)uc.append(el("p","card-sub",`${urgent.length-5} more urgent tasks`));}
+  else uc.append(el("p","card-sub","All urgent tasks are done."));
   if(c.note)uc.append(el("p","note-line",c.note));
   v.append(uc);
 
-  const ec=el("section","card");ec.append(cardHead("कार्यक्रम","See all",()=>go("events")));
+  const ec=el("section","card");ec.append(cardHead("Events","See all",()=>go("events")));
   const tl=el("ol","tl");
   sortedEvents().forEach(e=>{const its=allTasks().filter(i=>i.ev===e.id),s=stats(its);const li=el("li"+"");const b=btn("tlb");
     const d=el("div");d.append(el("b",null,e.name),el("span",null,fmtDate(e.date,{day:"numeric",month:"short"})+(e.time?" — "+e.time:"")));
@@ -798,8 +803,8 @@ function homeView(v){
     if(e.date&&daysTo(e.date)<0)li.classList.add("past");tl.append(li);});
   ec.append(tl);v.append(ec);
 
-  const pc=el("section","card");pc.append(cardHead("सूचियाँ"));
-  c.sections.forEach(s=>{const st=stats(itemsOfSec(s.id)),r=btn("secrow"),tx=el("span","tx");tx.append(el("b",null,s.name),el("span",null,`${st.d} / ${st.t} पूरे`));r.append(tx,miniBar(st),el("span","chev"));r.onclick=()=>go("lists",{sec:s.id});pc.append(r);});
+  const pc=el("section","card");pc.append(cardHead("Lists"));
+  c.sections.forEach(s=>{const st=stats(itemsOfSec(s.id)),r=btn("secrow"),tx=el("span","tx");tx.append(el("b",null,s.name),el("span",null,`${st.d} / ${st.t} done`));r.append(tx,miniBar(st),el("span","chev"));r.onclick=()=>go("lists",{sec:s.id});pc.append(r);});
   v.append(pc);
 }
 function eventsView(v){
@@ -809,76 +814,76 @@ function eventsView(v){
     const hd=el("section","evhead");
     hd.append(el("span","w",fmtDate(e.date)+(e.time?" — "+e.time:"")),el("h2",null,e.name));
     if(e.note)hd.append(el("p",null,e.note));
-    const meta=el("div","sechead");meta.append(ring(st),el("p",null,its.length?`${st.t-st.d} काम बाकी, ${st.d} पूरे`:"इस कार्यक्रम से कोई काम नहीं जुड़ा है"));hd.append(meta);
+    const meta=el("div","sechead");meta.append(ring(st),el("p",null,its.length?`${st.t-st.d} left, ${st.d} done`:"No tasks linked to this event"));hd.append(meta);
     if(isAdmin){const a=el("div","adm-row");const e1=btn("b","Edit event");e1.onclick=()=>openEventEdit(e.id);const e2=btn("b","+ Task");e2.onclick=()=>openItemEdit(null,{ev:e.id});const e3=btn("b","+ Menu");e3.onclick=()=>openMenuEdit(null,{ev:e.id});a.append(e1,e2,e3);hd.append(a);}
     v.append(hd);
     c.sections.forEach(s=>{const x=its.filter(i=>i.sec===s.id).filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;v.append(grpHead(s.name,its.filter(i=>i.sec===s.id)),listOf(x,{hideEv:true}));});
-    if(menus.length){v.append(el("div","grp-h"));const h=v.lastChild;h.append(el("h3",null,"खाने का मेन्यू"));
+    if(menus.length){v.append(el("div","grp-h"));const h=v.lastChild;h.append(el("h3",null,"Food menu"));
       const card=el("div","card");menus.forEach(m=>card.append(menuRow(m,true)));v.append(card);}
     return;
   }
   const evs=sortedEvents();
-  if(!evs.length){v.append(el("p","empty","अभी कोई कार्यक्रम नहीं है।"+(isAdmin?" नीचे + से जोड़ें।":"")));}
+  if(!evs.length){v.append(el("p","empty","No events yet."+(isAdmin?" Add one with +.":"")));}
   let last=null,card=null;
   evs.forEach(e=>{
     const key=e.date||"";
-    if(key!==last){last=key;const h=el("div","grp-h datehdr");const d=daysTo(e.date);h.append(el("h3",null,fmtDate(e.date)),el("span","cnt",e.date?(d===0?"आज":d===1?"कल":d>1?`${d} दिन में`:"हो चुका"):""));v.append(h);card=el("div","card");v.append(card);}
+    if(key!==last){last=key;const h=el("div","grp-h datehdr");const d=daysTo(e.date);h.append(el("h3",null,fmtDate(e.date)),el("span","cnt",e.date?(d===0?"Today":d===1?"Tomorrow":d>1?`in ${d} days`:"Past"):""));v.append(h);card=el("div","card");v.append(card);}
     const its=allTasks().filter(i=>i.ev===e.id),s=stats(its),menus=C().menus.filter(m=>m.ev===e.id);
     const b=btn("ev");b.append(el("span","w",e.time||"—"),el("b",null,e.name));
-    const meta=el("span","rm");if(s.t)meta.append(el("span","pill "+(s.t-s.d?"soon":"done"),s.t-s.d?`${s.t-s.d} काम बाकी`:"सब तैयार"));if(menus.length)meta.append(el("span","pill note","मेन्यू"));
+    const meta=el("span","rm");if(s.t)meta.append(el("span","pill "+(s.t-s.d?"soon":"done"),s.t-s.d?`${s.t-s.d} left`:"All ready"));if(menus.length)meta.append(el("span","pill note","Menu"));
     b.append(meta,el("span","chev"));b.onclick=()=>{view.ev=e.id;render();window.scrollTo(0,0);pushNav();};
     if(e.date&&daysTo(e.date)<0)b.classList.add("past");card.append(b);
   });
   const gen=allTasks().filter(i=>!i.ev),gs=stats(gen);
-  if(gen.length){const h=el("div","grp-h");h.append(el("h3",null,"किसी कार्यक्रम से न जुड़े काम"),el("span","cnt",`${gs.d}/${gs.t}`));v.append(h);
-    const card2=el("div","card");const r=btn("secrow");const tx=el("span","tx");tx.append(el("b",null,"सामान्य तैयारी"),el("span",null,`${gs.t-gs.d} बाकी — सूची टैब में देखें`));r.append(tx,miniBar(gs),el("span","chev"));r.onclick=()=>go("lists");card2.append(r);v.append(card2);}
+  if(gen.length){const h=el("div","grp-h");h.append(el("h3",null,"Tasks not linked to an event"),el("span","cnt",`${gs.d}/${gs.t}`));v.append(h);
+    const card2=el("div","card");const r=btn("secrow");const tx=el("span","tx");tx.append(el("b",null,"General prep"),el("span",null,`${gs.t-gs.d} left — see Lists tab`));r.append(tx,miniBar(gs),el("span","chev"));r.onclick=()=>go("lists");card2.append(r);v.append(card2);}
   const mc=C().menus.filter(m=>!m.ev||!evById(m.ev));
-  if(mc.length){v.append(grpHead("बाकी मेन्यू",[]));v.lastChild.querySelector(".cnt").textContent="";const card3=el("div","card");mc.forEach(m=>card3.append(menuRow(m,false)));v.append(card3);}
+  if(mc.length){v.append(grpHead("Other menus",[]));v.lastChild.querySelector(".cnt").textContent="";const card3=el("div","card");mc.forEach(m=>card3.append(menuRow(m,false)));v.append(card3);}
 }
 function menuRow(m,inEvent){
-  const b=btn("ev");b.append(el("span","w","खाना"),el("b",null,m.name));if(m.dishes)b.append(el("p",null,m.dishes));
+  const b=btn("ev");b.append(el("span","w","Meal"),el("b",null,m.name));if(m.dishes)b.append(el("p",null,m.dishes));
   if(isAdmin){b.append(el("span","chev"));b.onclick=()=>openMenuEdit(m.id);}else{b.classList.add("ro");b.disabled=false;b.onclick=()=>{};}
   return b;
 }
 function listsView(v){
-  const c=C();if(!c.sections.length){v.append(el("p","empty","कोई सूची नहीं है।"));return;}
+  const c=C();if(!c.sections.length){v.append(el("p","empty","No lists yet."));return;}
   const sid=secById(view.sec)?view.sec:c.sections[0].id;view.sec=sid;const sec=secById(sid);
   const groups=groupsOfSec(sid),st=stats(itemsOfSec(sid));
-  const head=el("div","sechead");head.append(ring(st),el("p",null,`${st.d} / ${st.t} पूरे${sec.desc?" — "+sec.desc:""}`));v.append(head);
+  const head=el("div","sechead");head.append(ring(st),el("p",null,`${st.d} / ${st.t} done${sec.desc?" — "+sec.desc:""}`));v.append(head);
   tools(v);let shown=0;
   groups.forEach(({g,items})=>{const x=items.filter(match).filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;
     const ul=listOf(x.map(i=>{const pre=g.name+": ";return i.text.startsWith(pre)?Object.assign({},i,{text:i.text.slice(pre.length)}):i;}),{drag:reorder&&isAdmin});
     if(reorder&&isAdmin)enableDrag(ul);
     v.append(grpHead(g.name,items),ul);shown+=x.length;});
-  if(reorder&&isAdmin)v.insertBefore(Object.assign(el("p","card-sub","⋮⋮ पकड़कर ऊपर-नीचे खींचें। क्रम अपने आप सेव हो जाएगा।"),{style:"padding:2px 6px 0"}),v.children[2]||null);
-  if(!shown)v.append(el("p","empty",query?"इस खोज से कुछ नहीं मिला।":hideDone?"इस सूची के सारे काम पूरे हो गए।":"यहाँ अभी कुछ नहीं है।"));
+  if(reorder&&isAdmin)v.insertBefore(Object.assign(el("p","card-sub","Hold ⋮⋮ and drag up or down. Order saves automatically."),{style:"padding:2px 6px 0"}),v.children[2]||null);
+  if(!shown)v.append(el("p","empty",query?"No matches.":hideDone?"All tasks in this list are done.":"Nothing here yet."));
 }
 function teamView(v){
   if(view.person!==null)return personView(v);
   const tasks=allTasks(),map={},none=[];
   tasks.forEach(i=>{const w=(state.who[i.id]||"").trim();if(!w)none.push(i);else(map[w]=map[w]||[]).push(i);});
-  v.append(Object.assign(el("p","card-sub","किसके पास कौन-से काम हैं। किसी नाम पर टैप करके उसके सारे काम देखें।"),{style:"padding:0 6px 12px"}));
+  v.append(Object.assign(el("p","card-sub","Who has which tasks. Tap a name to see all their tasks."),{style:"padding:0 6px 12px"}));
   const card=el("section","card");
   Object.keys(map).sort((a,b)=>a.localeCompare(b,"hi")).forEach(n=>card.append(personRow(n,map[n])));
   card.append(personRow("",none));v.append(card);
-  const oc=el("section","card");oc.append(cardHead("सेटिंग्स"));
-  const so=el("div","opt");so.append(el("span",null,"सिंक"),el("small",null,statusText||"—"));oc.append(so);
-  const ad=btn("opt");ad.append(el("span",null,isAdmin?"एडमिन मोड चालू है":"एडमिन पैनल खोलें"),el("span","chev"));ad.onclick=()=>isAdmin?go("admin"):openAdminLogin();oc.append(ad);
-  const ins=btn("opt");ins.append(el("span",null,"फ़ोन की होम स्क्रीन पर ऐप जोड़ें"),el("span","chev"));ins.onclick=openInstall;oc.append(ins);
-  const mv=btn("opt");mv.append(el("span",null,"डेटा कॉपी / इम्पोर्ट"),el("span","chev"));mv.onclick=openMove;oc.append(mv);
-  if(SHEET_URL){const lo=btn("opt");lo.append(el("span",null,"कोड बदलें / लॉग आउट"));lo.onclick=()=>{try{localStorage.removeItem(KEY+"-code");localStorage.removeItem(KEY+"-ok");localStorage.removeItem(KEY+"-admin");}catch(e){}location.reload();};oc.append(lo);}
+  const oc=el("section","card");oc.append(cardHead("Settings"));
+  const so=el("div","opt");so.append(el("span",null,"Sync"),el("small",null,statusText||"—"));oc.append(so);
+  const ad=btn("opt");ad.append(el("span",null,isAdmin?"Admin mode is on":"Open admin panel"),el("span","chev"));ad.onclick=()=>isAdmin?go("admin"):openAdminLogin();oc.append(ad);
+  const ins=btn("opt");ins.append(el("span",null,"Add app to phone Home Screen"),el("span","chev"));ins.onclick=openInstall;oc.append(ins);
+  const mv=btn("opt");mv.append(el("span",null,"Copy / Import data"),el("span","chev"));mv.onclick=openMove;oc.append(mv);
+  if(SHEET_URL){const lo=btn("opt");lo.append(el("span",null,"Change code / Log out"));lo.onclick=()=>{try{localStorage.removeItem(KEY+"-code");localStorage.removeItem(KEY+"-ok");localStorage.removeItem(KEY+"-admin");}catch(e){}location.reload();};oc.append(lo);}
   v.append(oc);
 }
 function personRow(name,items){
   const s=stats(items),b=btn("person"),av=el("span","av"+(name?"":" none"),name?name.trim().charAt(0):"?");
-  const tx=el("span","tx");tx.append(el("b",null,name||"बिना ज़िम्मेदार"),el("span",null,`${s.t-s.d} बाकी, कुल ${s.t}`));
+  const tx=el("span","tx");tx.append(el("b",null,name||"Unassigned"),el("span",null,`${s.t-s.d} left of ${s.t}`));
   b.append(av,tx,miniBar(s),el("span","chev"));b.onclick=()=>{view.person=name;render();window.scrollTo(0,0);pushNav();};return b;
 }
 function personView(v){
   const name=view.person,items=allTasks().filter(i=>(state.who[i.id]||"").trim()===name);
-  const st=stats(items),head=el("div","sechead");head.append(ring(st),el("p",null,`${st.t-st.d} काम बाकी, ${st.d} पूरे`));
+  const st=stats(items),head=el("div","sechead");head.append(ring(st),el("p",null,`${st.t-st.d} left, ${st.d} done`));
   if(name){const rn=btn("toggle","Rename");rn.onclick=()=>openRename(name);head.append(rn);}
-  v.append(head);if(!items.length){v.append(el("p","empty","कोई काम नहीं।"));return;}
+  v.append(head);if(!items.length){v.append(el("p","empty","No tasks."));return;}
   C().sections.forEach(s=>{const all=items.filter(i=>i.sec===s.id),x=all.filter(i=>!(hideDone&&state.checked[i.id]));if(!x.length)return;v.append(grpHead(s.name,all),listOf(x,{hideWho:true}));});
 }
 
@@ -887,47 +892,47 @@ function adminView(v){
   const c=C(),p=view.admin;
   const back=()=>history.back();
   if(!p){
-    v.append(Object.assign(el("p","card-sub","यहाँ से शादी की जानकारी, कार्यक्रम, सूचियाँ और मेन्यू बदल सकते हैं। एडमिन मोड में हर काम के अंदर भी बदलने और हटाने के बटन दिखते हैं।"),{style:"padding:0 6px 12px"}));
+    v.append(Object.assign(el("p","card-sub","Edit wedding details, events, lists and menus here. In admin mode every task also shows edit and delete options."),{style:"padding:0 6px 12px"}));
     const card=el("section","card");
-    [["info","शादी की जानकारी",c.title],["events","कार्यक्रम",c.events.length+" कार्यक्रम"],["sections","सूचियाँ और समूह",c.sections.length+" सूचियाँ"],["menus","खाने का मेन्यू",c.menus.length+" खाने"],["code","एडमिन कोड बदलें",""],["fresh","नई शादी शुरू करें",""],["cfg","सेटअप कॉपी / इम्पोर्ट",""]].forEach(([k,t,s])=>{
+    [["info","Wedding details",c.title],["events","Events",c.events.length+" events"],["sections","Lists & groups",c.sections.length+" lists"],["menus","Food menu",c.menus.length+" meals"],["code","Change admin code",""],["fresh","Start a new wedding",""],["cfg","Copy / Import setup",""]].forEach(([k,t,s])=>{
       const b=btn("opt");b.append(el("span",null,t),el("small",null,s),el("span","chev"));b.onclick=()=>{if(k==="info")return openInfo();if(k==="code")return openCode();view.admin=k;render();window.scrollTo(0,0);pushNav();};card.append(b);});
-    const off=btn("opt danger");off.append(el("span",null,"एडमिन मोड बंद करें"));off.onclick=()=>{try{localStorage.removeItem(KEY+"-admin");}catch(e){}isAdmin=false;go("home");toast("एडमिन मोड बंद");};card.append(off);
+    const off=btn("opt danger");off.append(el("span",null,"Turn off admin mode"));off.onclick=()=>{try{localStorage.removeItem(KEY+"-admin");}catch(e){}isAdmin=false;go("home");toast("Admin mode off");};card.append(off);
     v.append(card);return;
   }
   const bb=btn("lnk backlnk","‹ Back");bb.onclick=back;v.append(bb);
   if(p==="events"){
-    const card=el("section","card");card.append(cardHead("कार्यक्रम","+ Add",()=>openEventEdit(null)));
+    const card=el("section","card");card.append(cardHead("Events","+ Add",()=>openEventEdit(null)));
     sortedEvents().forEach(e=>{const b=btn("ev");b.append(el("span","w",fmtDate(e.date,{day:"numeric",month:"short",year:"numeric"})+(e.time?" — "+e.time:"")),el("b",null,e.name),el("span","chev"));b.onclick=()=>openEventEdit(e.id);card.append(b);});
     v.append(card);
   }else if(p==="sections"){
-    const card=el("section","card");card.append(cardHead("सूचियाँ","+ Add",()=>openSectionEdit(null)));
-    c.sections.forEach((s,i)=>{const b=btn("ev");b.append(el("span","w",itemsOfSec(s.id).length+" काम"),el("b",null,s.name));
-      const ch=c.groups.filter(g=>g.sec===s.id).map(g=>g.name).join(", ");if(ch)b.append(el("p",null,"समूह: "+ch));b.append(el("span","chev"));b.onclick=()=>openSectionEdit(s.id);card.append(b);});
+    const card=el("section","card");card.append(cardHead("Lists","+ Add",()=>openSectionEdit(null)));
+    c.sections.forEach((s,i)=>{const b=btn("ev");b.append(el("span","w",itemsOfSec(s.id).length+" tasks"),el("b",null,s.name));
+      const ch=c.groups.filter(g=>g.sec===s.id).map(g=>g.name).join(", ");if(ch)b.append(el("p",null,"Groups: "+ch));b.append(el("span","chev"));b.onclick=()=>openSectionEdit(s.id);card.append(b);});
     v.append(card);
   }else if(p==="menus"){
-    const card=el("section","card");card.append(cardHead("खाने का मेन्यू","+ Add",()=>openMenuEdit(null,{})));
-    c.menus.forEach(m=>{const e=evById(m.ev);const b=btn("ev");b.append(el("span","w",e?e.name:"किसी कार्यक्रम से नहीं जुड़ा"),el("b",null,m.name));if(m.dishes)b.append(el("p",null,m.dishes));b.append(el("span","chev"));b.onclick=()=>openMenuEdit(m.id);card.append(b);});
+    const card=el("section","card");card.append(cardHead("Food menu","+ Add",()=>openMenuEdit(null,{})));
+    c.menus.forEach(m=>{const e=evById(m.ev);const b=btn("ev");b.append(el("span","w",e?e.name:"Not linked to an event"),el("b",null,m.name));if(m.dishes)b.append(el("p",null,m.dishes));b.append(el("span","chev"));b.onclick=()=>openMenuEdit(m.id);card.append(b);});
     v.append(card);
   }else if(p==="fresh"){
-    const card=el("section","card");card.append(cardHead("नई शादी शुरू करें"));
-    card.append(el("p","card-sub","किसी और की शादी के लिए यही ऐप इस्तेमाल करें। पहले विकल्प में सारे कार्यक्रम, सूचियाँ और मेन्यू बने रहेंगे, सिर्फ़ टिक, नाम और नोट मिटेंगे। दूसरे विकल्प में सूचियों के नाम और समूह रहेंगे, बाकी सब खाली हो जाएगा।"));
+    const card=el("section","card");card.append(cardHead("Start a new wedding"));
+    card.append(el("p","card-sub","Use this app for another wedding. Option 1 keeps all events, lists and menus and only clears ticks, names and notes. Option 2 keeps list names and groups and clears everything else."));
     const box=el("div","pad");
-    const a=btn("b","New wedding (keep lists)");twoTap(a,"New wedding (keep lists)","Confirm? Ticks, names, notes will be cleared",()=>{state.checked={};state.who={};state.note={};save();toast("तैयार — अब जानकारी भरें");openInfo();});
-    const b2=btn("b danger","Start empty");twoTap(b2,"Start empty","Confirm? Everything will be removed",()=>{state.checked={};state.who={};state.note={};edit(c=>{c.events=[];c.items=[];c.menus=[];c.title="शादी की तैयारी";c.date="";c.place="";c.note="";});toast("खाली हो गया");openInfo();});
+    const a=btn("b","New wedding (keep lists)");twoTap(a,"New wedding (keep lists)","Confirm? Ticks, names, notes will be cleared",()=>{state.checked={};state.who={};state.note={};save();toast("Ready — now fill in the details");openInfo();});
+    const b2=btn("b danger","Start empty");twoTap(b2,"Start empty","Confirm? Everything will be removed",()=>{state.checked={};state.who={};state.note={};edit(c=>{c.events=[];c.items=[];c.menus=[];c.title="Wedding Planner";c.date="";c.place="";c.note="";});toast("Cleared");openInfo();});
     box.append(a,b2);card.append(box);v.append(card);
   }else if(p==="cfg"){
-    const card=el("section","card");card.append(cardHead("सेटअप कॉपी / इम्पोर्ट"));
-    card.append(el("p","card-sub","पूरा सेटअप (कार्यक्रम, सूचियाँ, समूह, मेन्यू) एक टेक्स्ट में कॉपी करें और किसी दूसरी शादी के ऐप में इम्पोर्ट करें।"));
+    const card=el("section","card");card.append(cardHead("Copy / Import setup"));
+    card.append(el("p","card-sub","Copy the whole setup (events, lists, groups, menus) as text and import it into another wedding's app."));
     const box=el("div","pad");const out=el("textarea","movebox");out.readOnly=true;out.hidden=true;
-    const cp=btn("b","Copy setup");cp.onclick=async()=>{const x=JSON.parse(JSON.stringify(C()));delete x.adminHash;out.value=JSON.stringify(x);out.hidden=false;out.select();try{await navigator.clipboard.writeText(out.value);toast("कॉपी हो गया");}catch(e){toast("खाने से कॉपी कर लें");}};
-    const inp=el("textarea","movebox");inp.placeholder="सेटअप यहाँ पेस्ट करें";
+    const cp=btn("b","Copy setup");cp.onclick=async()=>{const x=JSON.parse(JSON.stringify(C()));delete x.adminHash;out.value=JSON.stringify(x);out.hidden=false;out.select();try{await navigator.clipboard.writeText(out.value);toast("Copied");}catch(e){toast("Copy it from the box");}};
+    const inp=el("textarea","movebox");inp.placeholder="Paste setup here";
     const im=btn("b primary","Import setup");twoTap(im,"Import setup","Confirm? Current setup will be replaced",()=>{let d;try{d=JSON.parse(inp.value.trim());}catch(e){d=null;}
-      if(!d||!Array.isArray(d.events)||!Array.isArray(d.items)||!Array.isArray(d.sections)){toast("यह सेटअप सही नहीं है");return;}
-      const h=C().adminHash;d.adminHash=h;d.groups=d.groups||[];d.menus=d.menus||[];saveCfg(d);render();toast("सेटअप आ गया");});
+      if(!d||!Array.isArray(d.events)||!Array.isArray(d.items)||!Array.isArray(d.sections)){toast("Invalid setup");return;}
+      const h=C().adminHash;d.adminHash=h;d.groups=d.groups||[];d.menus=d.menus||[];saveCfg(d);render();toast("Setup imported");});
     box.append(cp,out,inp,im);card.append(box);v.append(card);
   }
 }
-function evOptions(sel,cur){const o0=el("option",null,"किसी कार्यक्रम से नहीं");o0.value="";sel.append(o0);sortedEvents().forEach(e=>{const o=el("option",null,e.name+(e.date?" ("+fmtDate(e.date,{day:"numeric",month:"short"})+")":""));o.value=e.id;sel.append(o);});sel.value=cur||"";}
+function evOptions(sel,cur){const o0=el("option",null,"No event");o0.value="";sel.append(o0);sortedEvents().forEach(e=>{const o=el("option",null,e.name+(e.date?" ("+fmtDate(e.date,{day:"numeric",month:"short"})+")":""));o.value=e.id;sel.append(o);});sel.value=cur||"";}
 function selField(label){const w=el("label","fld");w.append(el("span",null,label));const s=el("select");w.append(s);return {wrap:w,input:s};}
 
 /* ---------- sheet ---------- */
@@ -937,7 +942,7 @@ $("scrim").onclick=()=>closeSheet();
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
 function sheetTop(b,eyebrow,title,sub){
   const t=el("div","sh-top"),tx=el("div","tx");if(eyebrow)tx.append(el("div","eyebrow",eyebrow));tx.append(el("h2",null,title));if(sub)tx.append(el("p",null,sub));
-  const x=btn("x");x.setAttribute("aria-label","बंद करें");x.append(svg(ICON.x));x.onclick=()=>closeSheet();t.append(tx,x);b.append(t);return tx;
+  const x=btn("x");x.setAttribute("aria-label","Close");x.append(svg(ICON.x));x.onclick=()=>closeSheet();t.append(tx,x);b.append(t);return tx;
 }
 function field(label,type,value,ph){const w=el("label","fld");w.append(el("span",null,label));const i=el(type==="textarea"?"textarea":"input");if(type!=="textarea")i.type=type||"text";i.value=value||"";if(ph)i.placeholder=ph;w.append(i);return {wrap:w,input:i};}
 function autosize(t){const f=()=>{t.style.height="auto";t.style.height=Math.max(88,t.scrollHeight+2)+"px";};t.addEventListener("input",f);requestAnimationFrame(f);}
@@ -949,14 +954,14 @@ function openItem(id){
     const e=evById(it.ev),s=secById(it.sec);
     sheetTop(b,[s&&s.name,e&&e.name].filter(Boolean).join(" — "),it.text,it.sub);
     const st=btn("state");
-    const paint=()=>{st.className="state"+(done?" on":"");st.innerHTML="";st.append(el("i"));const x=el("span");x.append(el("b",null,done?"पूरा हो गया":"अभी बाकी है"),el("br"),el("small",null,done?"वापस बाकी करने के लिए टैप करें":"काम पूरा होने पर टैप करें"));st.append(x);};
+    const paint=()=>{st.className="state"+(done?" on":"");st.innerHTML="";st.append(el("i"));const x=el("span");x.append(el("b",null,done?"Completed":"Pending"),el("br"),el("small",null,done?"Tap to mark as pending":"Tap when the task is done"));st.append(x);};
     paint();st.onclick=()=>{done=!done;paint();};b.append(st);
-    const f1=field("ज़िम्मेदार (किसको दिया)","text",state.who[it.id],"नाम लिखें या नीचे से चुनें");f1.input.setAttribute("autocomplete","off");
+    const f1=field("Assigned to","text",state.who[it.id],"Type a name or pick below");f1.input.setAttribute("autocomplete","off");
     const names=[...new Set(Object.values(state.who).map(x=>(x||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"hi"));
     const chips=el("div","namechips");
     const paintChips=()=>{chips.innerHTML="";names.forEach(n=>{const c=btn("nchip"+(f1.input.value.trim()===n?" on":""),n);c.onclick=()=>{f1.input.value=f1.input.value.trim()===n?"":n;paintChips();};chips.append(c);});};
     f1.input.oninput=paintChips;paintChips();f1.wrap.append(chips);
-    const f2=field("संपर्क और नोट","textarea",state.note[it.id],"वेंडर का नाम, फ़ोन नंबर, रेट, एडवांस, पता…");autosize(f2.input);
+    const f2=field("Contact & notes","textarea",state.note[it.id],"Vendor name, phone, rate, advance, address…");autosize(f2.input);
     const calls=el("div","calls");
     const showCalls=()=>{calls.innerHTML="";(f2.input.value.match(PHONE)||[]).forEach(n=>{const a=el("a",null,"Call "+n.trim());a.href="tel:"+n.replace(/[\s-]/g,"");calls.append(a);});};
     f2.input.addEventListener("input",showCalls);showCalls();
@@ -968,7 +973,7 @@ function openItem(id){
     if(pre.length||post.length||isAdmin){
       const lk=el("div","links");
       const sec=(title,list)=>{if(!list.length)return;lk.append(el("div","lh",title));list.forEach(x=>{const r=btn("lrow"+(state.checked[x.id]?" ok":""));r.append(el("i"),el("span",null,x.text));r.onclick=()=>{commit();sheetOnClose=null;openItem(x.id);};lk.append(r);});};
-      sec("पहले ये काम होने चाहिए",pre);sec("इसके बाद ये काम",post);
+      sec("Must be done first",pre);sec("Tasks that come after",post);
       if(isAdmin){const lb=btn("b mini-b","Link tasks");lb.onclick=()=>{commit();sheetOnClose=null;openLinkPicker(it.id);};lk.append(lb);}
       b.append(lk);
     }
@@ -981,7 +986,7 @@ function openItem(id){
   });
 }
 function pickerList(b,excludeId,selected,multi){
-  const q=field("Search","text","","काम खोजें…");b.append(q.wrap);
+  const q=field("Search","text","","Search tasks…");b.append(q.wrap);
   const box=el("div","plist");b.append(box);
   const paint=()=>{box.innerHTML="";const s=q.input.value.trim().toLowerCase();
     C().sections.forEach(sec=>{const its=C().items.filter(i=>i.sec===sec.id&&i.id!==excludeId&&(!s||i.text.toLowerCase().includes(s)));if(!its.length)return;
@@ -994,11 +999,11 @@ function openLinkPicker(id){
   const it=C().items.find(i=>i.id===id);if(!it)return;
   const sel=new Set(it.after||[]);
   openSheet(b=>{
-    sheetTop(b,"Link tasks",it.text,"इस काम से पहले कौन-से काम होने ज़रूरी हैं? उन्हें चुनें।");
+    sheetTop(b,"Link tasks",it.text,"Which tasks must be done before this one? Select them.");
     pickerList(b,id,sel,true);
     const acts=el("div","sh-acts sticky"),cn=btn("b","Cancel"),sv=btn("b primary","Save");
     cn.onclick=()=>closeSheet();
-    sv.onclick=()=>{const bad=[...sel].find(x=>reaches(x,id));if(bad){toast("यह लिंक गोल घेरा बना देगा: "+short(itemMap()[bad].text,24));return;}
+    sv.onclick=()=>{const bad=[...sel].find(x=>reaches(x,id));if(bad){toast("This link would create a loop: "+short(itemMap()[bad].text,24));return;}
       edit(c=>{const x=c.items.find(i=>i.id===id);x.after=[...sel];});closeSheet();toast("Links saved");};
     acts.append(cn,sv);b.append(acts);
   });
@@ -1019,46 +1024,46 @@ function openMergePicker(id){
   const it=C().items.find(i=>i.id===id);if(!it)return;
   const sel=new Set();
   openSheet(b=>{
-    sheetTop(b,"Merge",it.text,"यह काम किसी दूसरे काम में मिला दें। ज़िम्मेदार, नोट और लिंक उसी में आ जाएँगे और यह वाला हट जाएगा।");
+    sheetTop(b,"Merge",it.text,"Merge this task into another. Assignee, notes and links move there, and this one is removed.");
     pickerList(b,id,sel,false);
     const acts=el("div","sh-acts sticky"),cn=btn("b","Cancel"),sv=btn("b primary","Merge");
     cn.onclick=()=>closeSheet();
-    twoTap(sv,"Merge","Confirm merge?",()=>{const t=[...sel][0];if(!t){toast("पहले एक काम चुनें");return;}mergeItems(id,t);closeSheet();toast("Merged");});
+    twoTap(sv,"Merge","Confirm merge?",()=>{const t=[...sel][0];if(!t){toast("Pick a task first");return;}mergeItems(id,t);closeSheet();toast("Merged");});
     acts.append(cn,sv);b.append(acts);
   });
 }
 function openItemEdit(id,def){
   const c=C(),it=id?c.items.find(i=>i.id===id):Object.assign({id:uid("i"),sec:(def&&def.sec)||view.sec||(c.sections[0]||{}).id,grp:"",text:"",sub:"",tag:"",ev:(def&&def.ev)||""},def||{});
   openSheet(b=>{
-    sheetTop(b,"एडमिन",id?"काम बदलें":"नया काम","");
-    const f1=field("काम","text",it.text,"क्या करना / खरीदना / बुक करना है?"),f2=field("छोटी जानकारी","text",it.sub,"जैसे: 10 फ़रवरी के लिए, 4 पीस");
-    const fe=selField("किस कार्यक्रम के लिए");evOptions(fe.input,it.ev);
-    const fs=selField("सूची");C().sections.forEach(s=>{const o=el("option",null,s.name);o.value=s.id;fs.input.append(o);});fs.input.value=it.sec;
-    const fg=selField("समूह");const fillG=()=>{fg.input.innerHTML="";const gs=C().groups.filter(g=>g.sec===fs.input.value);gs.forEach(g=>{const o=el("option",null,g.name);o.value=g.id;fg.input.append(o);});
-      const o=el("option",null,"+ नया समूह…");o.value="__new";fg.input.append(o);fg.input.value=gs.some(g=>g.id===it.grp)?it.grp:(gs[0]?gs[0].id:"__new");};
+    sheetTop(b,"Admin",id?"Edit task":"New task","");
+    const f1=field("Task","text",it.text,"What to do / buy / book?"),f2=field("Short info","text",it.sub,"e.g. for 10 Feb, 4 pieces");
+    const fe=selField("For which event");evOptions(fe.input,it.ev);
+    const fs=selField("Lists");C().sections.forEach(s=>{const o=el("option",null,s.name);o.value=s.id;fs.input.append(o);});fs.input.value=it.sec;
+    const fg=selField("Group");const fillG=()=>{fg.input.innerHTML="";const gs=C().groups.filter(g=>g.sec===fs.input.value);gs.forEach(g=>{const o=el("option",null,g.name);o.value=g.id;fg.input.append(o);});
+      const o=el("option",null,"+ New group…");o.value="__new";fg.input.append(o);fg.input.value=gs.some(g=>g.id===it.grp)?it.grp:(gs[0]?gs[0].id:"__new");};
     fillG();fs.input.onchange=fillG;
-    const fn=field("नए समूह का नाम","text","");fn.wrap.hidden=fg.input.value!=="__new";fg.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});fs.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});
-    const ft=selField("प्राथमिकता");[["","सामान्य"],["urgent","तुरंत"],["soon","जल्दी"]].forEach(([v,l])=>{const o=el("option",null,l);o.value=v;ft.input.append(o);});ft.input.value=it.tag||"";
+    const fn=field("New group name","text","");fn.wrap.hidden=fg.input.value!=="__new";fg.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});fs.input.addEventListener("change",()=>{fn.wrap.hidden=fg.input.value!=="__new";});
+    const ft=selField("Priority");[["","Normal"],["urgent","Urgent"],["soon","Soon"]].forEach(([v,l])=>{const o=el("option",null,l);o.value=v;ft.input.append(o);});ft.input.value=it.tag||"";
     b.append(f1.wrap,f2.wrap,fe.wrap,fs.wrap,fg.wrap,fn.wrap,ft.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const text=f1.input.value.trim();if(!text){f1.input.focus();return;}
-      edit(c=>{let grp=fg.input.value;if(grp==="__new"){const n=fn.input.value.trim()||"अन्य";grp=uid("g");c.groups.push({id:grp,sec:fs.input.value,name:n});}
+      edit(c=>{let grp=fg.input.value;if(grp==="__new"){const n=fn.input.value.trim()||"Other";grp=uid("g");c.groups.push({id:grp,sec:fs.input.value,name:n});}
         const o={id:it.id,sec:fs.input.value,grp,text,sub:f2.input.value.trim(),tag:ft.input.value,ev:fe.input.value,after:it.after||[]};
         const i=c.items.findIndex(x=>x.id===it.id);if(i>=0)c.items[i]=o;else c.items.push(o);});
-      closeSheet();toast("सेव हो गया");};
-    if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.items=c.items.filter(x=>x.id!==id);});closeSheet();toast("हटा दिया");});acts.append(db);}
+      closeSheet();toast("Saved");};
+    if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.items=c.items.filter(x=>x.id!==id);});closeSheet();toast("Deleted");});acts.append(db);}
     acts.append(sv);b.append(acts);if(!id)setTimeout(()=>f1.input.focus(),60);
   });
 }
 function openEventEdit(id){
   const e=id?evById(id):{id:uid("e"),name:"",date:"",time:"",note:""};
   openSheet(b=>{
-    sheetTop(b,"एडमिन",id?"कार्यक्रम बदलें":"नया कार्यक्रम","");
-    const f1=field("कार्यक्रम का नाम","text",e.name,"जैसे: हल्दी, मायरा, फेरे"),f2=field("तारीख","date",e.date),f3=field("समय","text",e.time,"जैसे: सायं 5:15"),f4=field("नोट","text",e.note,"जैसे: गोधूली बेला");
+    sheetTop(b,"Admin",id?"Edit event":"New event","");
+    const f1=field("Event name","text",e.name,"e.g. Haldi, Mayra, Pheras"),f2=field("Date","date",e.date),f3=field("Time","text",e.time,"e.g. 5:15 PM"),f4=field("Note","text",e.note,"e.g. evening muhurat");
     b.append(f1.wrap,f2.wrap,f3.wrap,f4.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const name=f1.input.value.trim();if(!name){f1.input.focus();return;}
-      edit(c=>{const o={id:e.id,name,date:f2.input.value,time:f3.input.value.trim(),note:f4.input.value.trim()};const i=c.events.findIndex(x=>x.id===e.id);if(i>=0)c.events[i]=o;else c.events.push(o);});closeSheet();toast("सेव हो गया");};
+      edit(c=>{const o={id:e.id,name,date:f2.input.value,time:f3.input.value.trim(),note:f4.input.value.trim()};const i=c.events.findIndex(x=>x.id===e.id);if(i>=0)c.events[i]=o;else c.events.push(o);});closeSheet();toast("Saved");};
     if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.events=c.events.filter(x=>x.id!==id);c.items.forEach(i=>{if(i.ev===id)i.ev="";});c.menus.forEach(m=>{if(m.ev===id)m.ev="";});});if(view.ev===id)view.ev=null;closeSheet();});acts.append(db);}
     acts.append(sv);b.append(acts);
   });
@@ -1066,13 +1071,13 @@ function openEventEdit(id){
 function openMenuEdit(id,def){
   const m=id?C().menus.find(x=>x.id===id):Object.assign({id:uid("m"),ev:"",name:"",dishes:""},def||{});
   openSheet(b=>{
-    sheetTop(b,"एडमिन",id?"मेन्यू बदलें":"नया मेन्यू","");
-    const f1=field("खाना","text",m.name,"जैसे: नाश्ता, दोपहर का खाना"),fe=selField("किस कार्यक्रम के लिए");evOptions(fe.input,m.ev);
-    const f3=field("क्या-क्या बनेगा (कॉमा से अलग करें)","textarea",m.dishes);autosize(f3.input);
+    sheetTop(b,"Admin",id?"Edit menu":"New menu","");
+    const f1=field("Meal","text",m.name,"e.g. Breakfast, Lunch"),fe=selField("For which event");evOptions(fe.input,m.ev);
+    const f3=field("Dishes (comma separated)","textarea",m.dishes);autosize(f3.input);
     b.append(f1.wrap,fe.wrap,f3.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const name=f1.input.value.trim();if(!name){f1.input.focus();return;}
-      edit(c=>{const o={id:m.id,ev:fe.input.value,name,dishes:f3.input.value.trim()};const i=c.menus.findIndex(x=>x.id===m.id);if(i>=0)c.menus[i]=o;else c.menus.push(o);});closeSheet();toast("सेव हो गया");};
+      edit(c=>{const o={id:m.id,ev:fe.input.value,name,dishes:f3.input.value.trim()};const i=c.menus.findIndex(x=>x.id===m.id);if(i>=0)c.menus[i]=o;else c.menus.push(o);});closeSheet();toast("Saved");};
     if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.menus=c.menus.filter(x=>x.id!==id);});closeSheet();});acts.append(db);}
     acts.append(sv);b.append(acts);
   });
@@ -1080,21 +1085,21 @@ function openMenuEdit(id,def){
 function openSectionEdit(id){
   const c=C(),s=id?secById(id):{id:uid("s"),name:"",desc:""};
   openSheet(b=>{
-    sheetTop(b,"एडमिन",id?"सूची बदलें":"नई सूची","");
-    const f1=field("सूची का नाम","text",s.name,"जैसे: खरीदारी, बुकिंग"),f2=field("छोटा विवरण","text",s.desc);
+    sheetTop(b,"Admin",id?"Edit list":"New list","");
+    const f1=field("List name","text",s.name,"e.g. Shopping, Booking"),f2=field("Short description","text",s.desc);
     b.append(f1.wrap,f2.wrap);
-    const gl=el("div","fld");gl.append(el("span",null,"समूह"));
+    const gl=el("div","fld");gl.append(el("span",null,"Group"));
     const gwrap=el("div","glist");gl.append(gwrap);
     let gs=c.groups.filter(g=>g.sec===s.id).map(g=>Object.assign({},g));
     const paint=()=>{gwrap.innerHTML="";gs.forEach((g,i)=>{const r=el("div","grow");const inp=el("input");inp.value=g.name;inp.oninput=()=>{g.name=inp.value;};
       const n=itemsOfSec(s.id).filter(x=>x.grp===g.id).length;const del=btn("b danger mini-b","Delete");
-      del.onclick=()=>{if(n){toast(`इसमें ${n} काम हैं, पहले उन्हें दूसरे समूह में डालें`);return;}gs.splice(i,1);paint();};r.append(inp,el("small",null,n+" काम"),del);gwrap.append(r);});
-      const add=btn("b","+ Add group");add.onclick=()=>{gs.push({id:uid("g"),sec:s.id,name:"नया समूह"});paint();};gwrap.append(add);};
+      del.onclick=()=>{if(n){toast(`This group has ${n} tasks. Move them to another group first`);return;}gs.splice(i,1);paint();};r.append(inp,el("small",null,n+" tasks"),del);gwrap.append(r);});
+      const add=btn("b","+ Add group");add.onclick=()=>{gs.push({id:uid("g"),sec:s.id,name:"New group"});paint();};gwrap.append(add);};
     paint();b.append(gl);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const name=f1.input.value.trim();if(!name){f1.input.focus();return;}
       edit(c=>{const o={id:s.id,name,desc:f2.input.value.trim()};const i=c.sections.findIndex(x=>x.id===s.id);if(i>=0)c.sections[i]=o;else c.sections.push(o);
-        c.groups=c.groups.filter(g=>g.sec!==s.id).concat(gs.map(g=>({id:g.id,sec:s.id,name:g.name.trim()||"समूह"})));});closeSheet();toast("सेव हो गया");};
+        c.groups=c.groups.filter(g=>g.sec!==s.id).concat(gs.map(g=>({id:g.id,sec:s.id,name:g.name.trim()||"Group"})));});closeSheet();toast("Saved");};
     if(id){const db=btn("b danger","Delete");twoTap(db,"Delete","Confirm delete?",()=>{edit(c=>{c.sections=c.sections.filter(x=>x.id!==id);c.groups=c.groups.filter(g=>g.sec!==id);c.items=c.items.filter(x=>x.sec!==id);});closeSheet();});acts.append(db);}
     acts.append(sv);b.append(acts);
   });
@@ -1102,36 +1107,36 @@ function openSectionEdit(id){
 function openInfo(){
   const c=C();
   openSheet(b=>{
-    sheetTop(b,"एडमिन","शादी की जानकारी","ऊपर होम स्क्रीन पर यही दिखेगा।");
-    const f1=field("ऊपर क्या लिखा दिखे","text",c.title,"जैसे: शादी की तैयारी, या दूल्हा-दुल्हन के नाम"),f2=field("मुख्य तारीख (शादी)","date",c.date),f3=field("जगह","text",c.place),f4=field("ज़रूरी सूचना","textarea",c.note);autosize(f4.input);
+    sheetTop(b,"Admin","Wedding details","This appears on the Home screen.");
+    const f1=field("Title shown on top","text",c.title,"e.g. Wedding Planner, or the couple's names"),f2=field("Main date (wedding day)","date",c.date),f3=field("Place","text",c.place),f4=field("Important note","textarea",c.note);autosize(f4.input);
     b.append(f1.wrap,f2.wrap,f3.wrap,f4.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
-    sv.onclick=()=>{edit(x=>{x.title=f1.input.value.trim()||"शादी की तैयारी";x.date=f2.input.value;x.place=f3.input.value.trim();x.note=f4.input.value.trim();});closeSheet();toast("सेव हो गया");};
+    sv.onclick=()=>{edit(x=>{x.title=f1.input.value.trim()||"Wedding Planner";x.date=f2.input.value;x.place=f3.input.value.trim();x.note=f4.input.value.trim();});closeSheet();toast("Saved");};
     acts.append(sv);b.append(acts);
   });
 }
 function openCode(){
   openSheet(b=>{
-    sheetTop(b,"एडमिन","एडमिन कोड बदलें","नया कोड सबसे अलग रखें। फ़ैमिली कोड वही रहेगा।");
-    const f=field("नया एडमिन कोड","text","");b.append(f.wrap);
+    sheetTop(b,"Admin","Change admin code","Use a code different from the family code. The family code stays the same.");
+    const f=field("New admin code","text","");b.append(f.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
-    sv.onclick=async()=>{const v=f.input.value.trim();if(v.length<4){toast("कम से कम 4 अक्षर");return;}const h=await sha(v);edit(c=>{c.adminHash=h;});try{localStorage.setItem(KEY+"-admin",h);}catch(e){}closeSheet();toast("एडमिन कोड बदल गया");};
+    sv.onclick=async()=>{const v=f.input.value.trim();if(v.length<4){toast("At least 4 characters");return;}const h=await sha(v);edit(c=>{c.adminHash=h;});try{localStorage.setItem(KEY+"-admin",h);}catch(e){}closeSheet();toast("Admin code changed");};
     acts.append(sv);b.append(acts);
   });
 }
 function openAdminLogin(){
   openSheet(b=>{
-    sheetTop(b,"एडमिन","एडमिन पैनल","कार्यक्रम, सूचियाँ और मेन्यू बदलने के लिए एडमिन कोड डालें।");
-    const f=field("एडमिन कोड","password","");b.append(f.wrap);
+    sheetTop(b,"Admin","Admin panel","Enter the admin code to edit events, lists and menus.");
+    const f=field("Admin code","password","");b.append(f.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Open");
-    const go2=async()=>{const h=await sha(f.input.value.trim());if(h!==C().adminHash){toast("कोड सही नहीं है");return;}try{localStorage.setItem(KEY+"-admin",h);}catch(e){}isAdmin=true;closeSheet();go("admin");toast("एडमिन मोड चालू");};
+    const go2=async()=>{const h=await sha(f.input.value.trim());if(h!==C().adminHash){toast("Wrong code");return;}try{localStorage.setItem(KEY+"-admin",h);}catch(e){}isAdmin=true;closeSheet();go("admin");toast("Admin mode on");};
     sv.onclick=go2;f.input.onkeydown=e=>{if(e.key==="Enter")go2();};acts.append(sv);b.append(acts);setTimeout(()=>f.input.focus(),60);
   });
 }
 function openRename(name){
   openSheet(b=>{
-    sheetTop(b,"टीम","नाम बदलें","नया नाम इनके सभी कामों में बदल जाएगा। खाली छोड़कर सेव करेंगे तो यह नाम सभी कामों से हट जाएगा।");
-    const f=field("नाम","text",name);b.append(f.wrap);
+    sheetTop(b,"Team","Rename","The new name replaces this name on all their tasks. Leave it empty to remove the name from all tasks.");
+    const f=field("Name","text",name);b.append(f.wrap);
     const acts=el("div","sh-acts"),sv=btn("b primary","Save");
     sv.onclick=()=>{const nv=f.input.value.trim();Object.keys(state.who).forEach(k=>{if((state.who[k]||"").trim()===name)state.who[k]=nv;});save();view.person=nv||null;closeSheet();};
     acts.append(sv);b.append(acts);
@@ -1141,31 +1146,31 @@ let installEvt=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e;});
 function openInstall(){
   openSheet(b=>{
-    sheetTop(b,"ऐप","होम स्क्रीन पर जोड़ें","इसके बाद यह लिस्ट फ़ोन में एक ऐप की तरह खुलेगी।");
+    sheetTop(b,"App","Add to Home Screen","The list will then open like an app on your phone.");
     if(installEvt){const i=btn("b primary","Install now");i.style.cssText="width:100%;margin-top:18px";i.onclick=async()=>{installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;closeSheet();};b.append(i);}
-    const p1=el("p","hint");p1.innerHTML="<b>Android (Chrome):</b> ऊपर दाईं ओर ⋮ मेनू → <b>Add to Home screen</b> या <b>Install app</b>।";
-    const p2=el("p","hint");p2.innerHTML="<b>iPhone (Safari):</b> नीचे Share बटन → <b>Add to Home Screen</b>।";
+    const p1=el("p","hint");p1.innerHTML="<b>Android (Chrome):</b> top-right ⋮ menu → <b>Add to Home screen</b> or <b>Install app</b>.";
+    const p2=el("p","hint");p2.innerHTML="<b>iPhone (Safari):</b> tap the Share button → <b>Add to Home Screen</b>.";
     b.append(p1,p2);
   });
 }
 function openMove(){
   openSheet(b=>{
-    sheetTop(b,"डेटा","कॉपी / इम्पोर्ट","पुरानी जगह से Copy करें, फिर यहाँ पेस्ट करके Import करें।");
-    const out=field("इस फ़ोन का डेटा","textarea","");out.input.readOnly=true;out.wrap.hidden=true;
+    sheetTop(b,"Data","Copy / Import","Copy from the old place, paste here and tap Import.");
+    const out=field("Data on this phone","textarea","");out.input.readOnly=true;out.wrap.hidden=true;
     const cp=btn("b","Copy data");cp.style.cssText="width:100%;margin-top:16px";
-    cp.onclick=async()=>{out.input.value=JSON.stringify(state);out.wrap.hidden=false;out.input.select();try{await navigator.clipboard.writeText(out.input.value);toast("कॉपी हो गया");}catch(e){toast("खाने से कॉपी कर लें");}};
-    const inp=field("डेटा पेस्ट करें","textarea","","यहाँ पेस्ट करें");
+    cp.onclick=async()=>{out.input.value=JSON.stringify(state);out.wrap.hidden=false;out.input.select();try{await navigator.clipboard.writeText(out.input.value);toast("Copied");}catch(e){toast("Copy it from the box");}};
+    const inp=field("Paste data","textarea","","Paste here");
     const im=btn("b primary","Import");im.style.cssText="width:100%;margin-top:12px";
     im.onclick=()=>{let d;try{d=JSON.parse(inp.input.value.trim());}catch(e){d=null;}
-      if(!d||typeof d!=="object"||!d.checked){toast("यह डेटा सही नहीं है");return;}
+      if(!d||typeof d!=="object"||!d.checked){toast("Invalid data");return;}
       ["checked","who","note"].forEach(k=>{if(d[k]&&typeof d[k]==="object")Object.assign(state[k],d[k]);});
-      save();closeSheet();toast("डेटा आ गया");};
+      save();closeSheet();toast("Data imported");};
     b.append(cp,out.wrap,inp.wrap,im);
   });
 }
 
 /* ---------- render ---------- */
-function tabs(){const t=[{id:"home",label:"होम",icon:"home"},{id:"events",label:"कार्यक्रम",icon:"cal"},{id:"lists",label:"सूची",icon:"list"},{id:"team",label:"टीम",icon:"users"}];if(isAdmin)t.push({id:"admin",label:"एडमिन",icon:"gear"});return t;}
+function tabs(){const t=[{id:"home",label:"Home",icon:"home"},{id:"events",label:"Events",icon:"cal"},{id:"lists",label:"Lists",icon:"list"},{id:"team",label:"Team",icon:"users"}];if(isAdmin)t.push({id:"admin",label:"Admin",icon:"gear"});return t;}
 function renderView(){
   const v=$("view");v.innerHTML="";
   if(view.tab==="events")eventsView(v);else if(view.tab==="lists")listsView(v);else if(view.tab==="team")teamView(v);else if(view.tab==="admin"&&isAdmin)adminView(v);else homeView(v);
@@ -1179,11 +1184,11 @@ function render(){
   const T=tabs();if(!T.some(t=>t.id===view.tab))view.tab="home";
   const nav=$("nav");nav.innerHTML="";nav.style.gridTemplateColumns=`repeat(${T.length},1fr)`;
   T.forEach(t=>{const b=btn("");b.append(svg(ICON[t.icon]),el("span",null,t.label));if(view.tab===t.id)b.setAttribute("aria-current","page");b.onclick=()=>go(t.id);nav.append(b);});
-  const back=view.tab==="events"&&view.ev?"‹ कार्यक्रम":view.tab==="team"&&view.person!==null?"‹ टीम":"";
+  const back=view.tab==="events"&&view.ev?"‹ Events":view.tab==="team"&&view.person!==null?"‹ Team":"";
   $("back").hidden=!back;$("back").textContent=back;
-  const titles={home:c.title||"शादी की तैयारी",events:view.ev?"":"कार्यक्रम",lists:"सूची",team:view.person!==null?(view.person||"बिना ज़िम्मेदार"):"टीम",admin:"एडमिन पैनल"};
+  const titles={home:c.title||"Wedding Planner",events:view.ev?"":"Events",lists:"Lists",team:view.person!==null?(view.person||"Unassigned"):"Team",admin:"Admin panel"};
   $("title").textContent=titles[view.tab]||"";
-  document.title=(c.title||"शादी की तैयारी");
+  document.title=(c.title||"Wedding Planner");
   const seg=$("seg");seg.innerHTML="";seg.hidden=view.tab!=="lists";
   if(view.tab==="lists"){if(!secById(view.sec)&&c.sections[0])view.sec=c.sections[0].id;
     c.sections.forEach(s=>{const b=btn("");b.append(document.createTextNode(s.name));const st=stats(itemsOfSec(s.id));b.append(el("small",null,String(st.t-st.d)));
@@ -1204,11 +1209,11 @@ function gate(){
   const open=()=>{if(app.hidden){lock.hidden=true;app.hidden=false;render();}};
   const shut=t=>{app.hidden=true;lock.hidden=false;msg.textContent=t||"";};
   if(!SHEET_URL){open();return;}
-  if(badCode){okFlag(false);checking=false;b.disabled=false;b.textContent="Open";shut(code?"यह कोड सही नहीं है। दोबारा देखकर डालें।":"");return;}
+  if(badCode){okFlag(false);checking=false;b.disabled=false;b.textContent="Open";shut(code?"Wrong code. Please check and try again.":"");return;}
   if(ready){okFlag(true);checking=false;open();return;}
   if(okFlag()){open();return;}
-  if(offline){checking=false;b.disabled=false;b.textContent="Open";shut("इंटरनेट नहीं मिल रहा। नेटवर्क देखकर दोबारा कोशिश करें।");return;}
-  shut(checking?"कोड जाँचा जा रहा है…":"");
+  if(offline){checking=false;b.disabled=false;b.textContent="Open";shut("No internet. Check your network and try again.");return;}
+  shut(checking?"Checking code…":"");
 }
 $("lockBtn").onclick=()=>{
   const v=$("lockIn").value.trim();if(!v){$("lockIn").focus();return;}
