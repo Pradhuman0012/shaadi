@@ -2,6 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("somesh-shaadi-v1-theme")||"light");}catch(e){document.documentElement.setAttribute("data-theme","light");}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Wedding Planner</title>
 <meta name="theme-color" content="#F7F3EC" media="(prefers-color-scheme: light)">
@@ -314,11 +315,34 @@ button{cursor:pointer}
 .cadd input{min-width:0;border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:9px 10px;font-size:16px;color:var(--ink)}
 .cadd .b{height:auto;padding:0 14px;flex:none}
 .cpick{margin-top:8px;width:auto;padding:0 14px;height:38px}
-.viewer{position:fixed;inset:0;z-index:80;background:rgba(10,8,8,.94);display:flex;flex-direction:column}
-.viewer .vi{flex:1;min-height:0;display:grid;place-items:center;padding:12px}
-.viewer img{max-width:100%;max-height:100%;object-fit:contain}
-.viewer .vb{display:flex;gap:10px;padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 14px)}
-.viewer .vb .b{background:#2a2523;color:#fff;border-color:#3a3330}
+
+.iconbtn{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink2);padding:0}
+.iconbtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.assignbtn{display:flex;flex-wrap:wrap;align-items:center;gap:6px;width:100%;min-height:46px;border:1px solid var(--line);background:var(--surface2);border-radius:12px;padding:8px 12px;text-align:left;color:var(--ink)}
+.assignbtn .chev{margin-left:auto}.ph{color:var(--muted);font-size:.95rem}
+.popup{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px}
+.pscrim{position:absolute;inset:0;background:rgba(20,12,10,.5)}
+.pcard2{position:relative;width:min(380px,100%);max-height:80vh;overflow:auto;background:var(--surface);border-radius:20px;padding:20px;box-shadow:0 20px 50px -10px rgba(0,0,0,.4)}
+.pcard2 h3{margin:0;font-family:var(--serif);font-weight:400;font-size:1.3rem}.pcard2 p{margin:4px 0 12px;color:var(--muted);font-size:.9rem}
+.namechips.big{gap:8px}.namechips.big .nchip{padding:8px 16px;font-size:.95rem}
+.cadd.one{grid-template-columns:1fr auto}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px}
+.paddbtn{border:1px solid var(--accent);color:var(--accent);border-radius:999px;padding:6px 14px;font-size:.88rem;font-weight:600;cursor:pointer}
+.prail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 0 6px;scrollbar-width:none}
+.prail::-webkit-scrollbar{display:none}
+.pcard{flex:0 0 82%;aspect-ratio:4/3;scroll-snap-align:start;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--surface2);padding:0;color:var(--muted)}
+.pcard img{width:100%;height:100%;object-fit:cover;display:block}
+.pempty{flex:1;border:1px dashed var(--line);border-radius:14px;padding:26px 14px;text-align:center;color:var(--muted);font-size:.9rem}
+.viewer{position:fixed;inset:0;z-index:100;background:#0d0b0b;display:flex;flex-direction:column}
+.vtop{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 10px;color:#eee}
+.vbtn{border:1px solid #3a3330;background:#262120;color:#fff;border-radius:999px;padding:8px 16px;font-size:.9rem}
+.vbtn.danger{color:#f0a798}.vbtn.armed{background:#a23b2a;color:#fff;border-color:#a23b2a}
+.vrail{flex:1;min-height:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.vrail::-webkit-scrollbar{display:none}
+.vslide{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;display:grid;place-items:center;overflow:hidden;touch-action:pan-x}
+.vslide img{max-width:100%;max-height:100%;object-fit:contain;transform-origin:center;user-select:none;-webkit-user-drag:none;will-change:transform}
+.viewer .vb{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 14px);background:none}
+.vhint{color:#8c8279;font-size:.78rem}
 </style>
 </head>
 <body>
@@ -336,7 +360,7 @@ button{cursor:pointer}
   </div>
 </div>
 <div id="app" class="app" hidden>
-  <header class="topbar"><button type="button" class="back" id="back" hidden>‹ Members</button><h1 id="title">Wedding Planner</h1><span id="sync" class="sdot">…</span></header>
+  <header class="topbar"><button type="button" class="back" id="back" hidden>‹ Members</button><h1 id="title">Wedding Planner</h1><button type="button" id="themeBtn" class="iconbtn" aria-label="Switch theme"></button><span id="sync" class="sdot">…</span></header>
   <nav id="seg" class="seg" aria-label="Sections" hidden></nav>
   <main id="view" class="view"></main>
   <button type="button" class="fab" id="fab" aria-label="Add new" hidden><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -644,6 +668,8 @@ function twoTap(b,label,confirmLabel,onConfirm){
 function toast(t){const o=document.querySelector(".toast");if(o)o.remove();const d=el("div","toast",t);d.setAttribute("role","status");document.body.append(d);setTimeout(()=>d.remove(),2200);}
 async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
 const ICON={
+ moon:'<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h5v-6h4v6h5V9.5"/>',
  list:'<path d="M10 6h10M10 12h10M10 18h10"/><path d="m3.5 6 1.3 1.3L7.5 4.6M3.5 12l1.3 1.3 2.7-2.7M3.5 18l1.3 1.3 2.7-2.7"/>',
  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
@@ -744,6 +770,7 @@ function pushNav(){const f=()=>{history.pushState({v:snap()},"");};if(ignorePop)
 function go(tab,extra){remember();view=Object.assign({tab,sec:view.sec,ev:null,person:null,admin:null,flt:null},extra||{});query="";saveUI();render();window.scrollTo(0,0);pushNav();}
 window.addEventListener("popstate",e=>{
   if(ignorePop){ignorePop--;if(afterPop){const f=afterPop;afterPop=null;f();}return;}
+  if(viewerEl){closeViewer(true);return;}
   if(!$("sheet").hidden){closeSheet(true);return;}
   const v=e.state&&e.state.v;
   view=Object.assign({tab:"home",sec:view.sec,ev:null,person:null,admin:null,flt:null},v||{});
@@ -1002,6 +1029,23 @@ function sheetTop(b,eyebrow,title,sub){
 function field(label,type,value,ph){const w=el("label","fld");w.append(el("span",null,label));const i=el(type==="textarea"?"textarea":"input");if(type!=="textarea")i.type=type||"text";i.value=value||"";if(ph)i.placeholder=ph;w.append(i);return {wrap:w,input:i};}
 function autosize(t){const f=()=>{t.style.height="auto";t.style.height=Math.max(88,t.scrollHeight+2)+"px";};t.addEventListener("input",f);requestAnimationFrame(f);}
 
+
+function openNamePicker(current,onDone){
+  const sel=new Set(String(current||"").split(",").map(x=>x.trim()).filter(Boolean));
+  const o=el("div","popup"),scrim=el("div","pscrim"),card=el("div","pcard2");
+  card.append(el("h3",null,"Assign to"),el("p",null,"Pick one or more people"));
+  const chips=el("div","namechips big");
+  const paint=()=>{chips.innerHTML="";[...new Set(allNames().concat([...sel]))].forEach(n=>{const c=btn("nchip"+(sel.has(n)?" on":""),n);c.onclick=()=>{sel.has(n)?sel.delete(n):sel.add(n);paint();};chips.append(c);});
+    if(!chips.children.length)chips.append(el("span","ph","No members yet — add a name below"));};
+  paint();card.append(chips);
+  const row=el("div","cadd one"),ni=el("input"),ad=btn("b","Add");ni.placeholder="New name";
+  const add=()=>{const n=ni.value.trim().replace(/,/g," ");if(!n)return;sel.add(n);ni.value="";paint();};
+  ad.onclick=add;ni.onkeydown=e=>{if(e.key==="Enter")add();};row.append(ni,ad);card.append(row);
+  const acts=el("div","sh-acts"),cn=btn("b","Cancel"),dn=btn("b primary","Done");
+  const close=()=>o.remove();cn.onclick=close;scrim.onclick=close;dn.onclick=()=>{add();onDone([...sel].join(", "));close();};
+  acts.append(cn,dn);card.append(acts);o.append(scrim,card);document.body.append(o);
+}
+
 /* ---------- photos & contacts ---------- */
 const photoCache={};
 function compressImage(file){return new Promise((res,rej)=>{const url=URL.createObjectURL(file),img=new Image();
@@ -1012,13 +1056,38 @@ async function getPhoto(id){if(photoCache[id])return photoCache[id];const r=awai
 async function uploadPhoto(file,itemId){const {data,mime}=await compressImage(file);
   const r=await fetch(SHEET_URL,{method:"POST",body:JSON.stringify({code,action:"upload",name:"task-"+itemId+"-"+Date.now()+".jpg",mime,data})});
   const j=await r.json();if(!j.ok||!j.id)throw new Error("noupload");photoCache[j.id]="data:"+mime+";base64,"+data;return j.id;}
-function openViewer(itemId,pid,after){
-  const o=el("div","viewer"),vi=el("div","vi"),im=el("img");im.alt="photo";vi.append(im);getPhoto(pid).then(d=>{im.src=d;});
-  const vb=el("div","vb"),cl=btn("b","Close"),dl=btn("b","Delete photo");
-  const close=()=>{o.remove();after&&after();};cl.onclick=close;
-  twoTap(dl,"Delete photo","Confirm delete?",()=>{state.photos[itemId]=(state.photos[itemId]||[]).filter(x=>x!==pid);if(!state.photos[itemId].length)delete state.photos[itemId];save();
-    if(SHEET_URL)fetch(SHEET_URL,{method:"POST",body:JSON.stringify({code,action:"photo_del",id:pid})}).catch(()=>{});close();toast("Photo deleted");});
-  vb.append(cl,dl);o.append(vi,vb);document.body.append(o);
+let viewerEl=null;
+function closeViewer(fromPop,after){if(!viewerEl)return;viewerEl.remove();viewerEl=null;if(fromPop!==true){ignorePop++;history.back();}after&&after();}
+function openViewer(itemId,startIdx,after){
+  const ids=(state.photos[itemId]||[]).slice();if(!ids.length)return;
+  const o=el("div","viewer"),top=el("div","vtop"),cnt=el("span"),cl=btn("vbtn","Close");top.append(cnt,cl);
+  const rail=el("div","vrail");o.append(top,rail);
+  const S=ids.map(pid=>{const s=el("div","vslide"),im=el("img");im.alt="photo";im.draggable=false;s.append(im);getPhoto(pid).then(d=>{im.src=d;}).catch(()=>{s.append(el("span","ph","Could not load"));});rail.append(s);return {s,im,pid,sc:1,x:0,y:0};});
+  const tf=q=>{q.im.style.transform="translate("+q.x+"px,"+q.y+"px) scale("+q.sc+")";};
+  let cur=Math.min(startIdx||0,S.length-1);
+  const upd=()=>{cnt.textContent=(cur+1)+" / "+S.length;};upd();
+  const lock=q=>{const z=q.sc>1.02;rail.style.overflowX=z?"hidden":"auto";q.s.style.touchAction=z?"none":"pan-x";};
+  rail.addEventListener("scroll",()=>{const i=Math.round(rail.scrollLeft/rail.clientWidth);if(i!==cur&&i>=0&&i<S.length){const p=S[cur];p.sc=1;p.x=p.y=0;tf(p);lock(p);cur=i;upd();}});
+  S.forEach(q=>{
+    const pts=new Map();let d0=0,sc0=1,last=0,pan=null;
+    q.s.addEventListener("pointerdown",e=>{try{q.s.setPointerCapture(e.pointerId);}catch(x){}pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      if(pts.size===2){const [a,b]=[...pts.values()];d0=Math.hypot(a.x-b.x,a.y-b.y)||1;sc0=q.sc;}
+      else{pan={x:e.clientX-q.x,y:e.clientY-q.y};const n=Date.now();if(n-last<300){q.sc=q.sc>1.1?1:2.5;if(q.sc===1)q.x=q.y=0;tf(q);lock(q);}last=n;}});
+    q.s.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      if(pts.size===2){const [a,b]=[...pts.values()],d=Math.hypot(a.x-b.x,a.y-b.y);q.sc=Math.min(6,Math.max(1,sc0*d/d0));tf(q);lock(q);}
+      else if(pts.size===1&&q.sc>1.02&&pan){q.x=e.clientX-pan.x;q.y=e.clientY-pan.y;tf(q);}});
+    const up=e=>{pts.delete(e.pointerId);if(pts.size===1){const [a]=[...pts.values()];pan={x:a.x-q.x,y:a.y-q.y};}if(q.sc<=1.02){q.sc=1;q.x=q.y=0;tf(q);}lock(q);};
+    q.s.addEventListener("pointerup",up);q.s.addEventListener("pointercancel",up);
+    q.s.addEventListener("wheel",e=>{e.preventDefault();q.sc=Math.min(6,Math.max(1,q.sc*(e.deltaY<0?1.15:0.87)));if(q.sc===1)q.x=q.y=0;tf(q);lock(q);},{passive:false});
+    lock(q);
+  });
+  const vb=el("div","vb"),dl=btn("vbtn danger","Delete photo");
+  twoTap(dl,"Delete photo","Tap again to delete",()=>{const pid=S[cur].pid;state.photos[itemId]=(state.photos[itemId]||[]).filter(x=>x!==pid);if(!state.photos[itemId].length)delete state.photos[itemId];save();
+    if(SHEET_URL)fetch(SHEET_URL,{method:"POST",body:JSON.stringify({code,action:"photo_del",id:pid})}).catch(()=>{});closeViewer(false,after);toast("Photo deleted");});
+  vb.append(el("span","vhint","Pinch or double-tap to zoom · swipe for next"),dl);o.append(vb);
+  cl.onclick=()=>closeViewer(false,after);
+  document.body.append(o);viewerEl=o;remember();history.pushState({viewer:1,v:snap()},"");
+  requestAnimationFrame(()=>{rail.scrollLeft=cur*rail.clientWidth;});
 }
 function contactsBlock(it){
   const cb=el("div","cblock");cb.append(el("div","lh","Contacts (vendor, person)"));const cl=el("div");cb.append(cl);
@@ -1029,15 +1098,25 @@ function contactsBlock(it){
   const form=el("div","cadd"),ni=el("input"),pi=el("input"),ad=btn("b primary","Add");ni.placeholder="Name";pi.placeholder="Phone";pi.type="tel";
   const add=(n,p)=>{if(!n&&!p)return;(state.contacts[it.id]=state.contacts[it.id]||[]).push({n:n||"",p:p||""});save();ni.value="";pi.value="";paint();};
   ad.onclick=()=>add(ni.value.trim(),pi.value.trim());form.append(ni,pi,ad);cb.append(form);
-  if(navigator.contacts&&navigator.contacts.select){const pk=btn("b cpick","Pick from phone contacts");pk.onclick=async()=>{try{const r=await navigator.contacts.select(["name","tel"],{multiple:false});if(r&&r[0])add((r[0].name||[])[0]||"",(r[0].tel||[])[0]||"");}catch(e){}};cb.append(pk);}
+  const pk=btn("b cpick","Pick from phone contacts");
+  pk.onclick=async()=>{
+    if(!(navigator.contacts&&navigator.contacts.select)){toast("This browser can't open contacts. Type the name and number instead.");return;}
+    try{const r=await navigator.contacts.select(["name","tel"],{multiple:false});
+      if(!r||!r.length)return;const c=r[0],n=(c.name&&c.name[0])||"",t=(c.tel&&c.tel[0])||"";
+      if(!n&&!t){toast("That contact has no name or number");return;}
+      add(n,String(t).trim());toast("Contact added");}
+    catch(e){toast(e&&e.name==="InvalidStateError"?"Contacts are open elsewhere — try again":"Could not read contacts: "+(e&&e.name||"error"));}
+  };cb.append(pk);
   return cb;
 }
 function photosBlock(it){
-  const pb=el("div","pblock");pb.append(el("div","lh","Photos & receipts"));const grid=el("div","pgrid");pb.append(grid);
-  const paint=()=>{grid.innerHTML="";(state.photos[it.id]||[]).forEach(pid=>{const t=btn("pth"),im=el("img");im.alt="photo";t.append(im);getPhoto(pid).then(d=>{im.src=d;}).catch(()=>{t.textContent="!";});t.onclick=()=>openViewer(it.id,pid,paint);grid.append(t);});
-    const lab=el("label","padd","+ Add photo"),inp=el("input");inp.type="file";inp.accept="image/*";inp.hidden=true;lab.append(inp);
-    inp.onchange=async()=>{const f=inp.files[0];if(!f)return;lab.textContent="Uploading…";try{const id=await uploadPhoto(f,it.id);(state.photos[it.id]=state.photos[it.id]||[]).push(id);save();toast("Photo added");}catch(e){toast(e.message==="noupload"?"Photo upload needs the Apps Script update":"Upload failed");}paint();};
-    grid.append(lab);};
+  const pb=el("div","pblock"),hd=el("div","phead"),ttl=el("span","lh","Photos & receipts"),lab=el("label","paddbtn"),sp=el("span",null,"+ Add photo"),inp=el("input");
+  inp.type="file";inp.accept="image/*";inp.hidden=true;lab.append(sp,inp);hd.append(ttl,lab);pb.append(hd);
+  const rail=el("div","prail");pb.append(rail);
+  const paint=()=>{rail.innerHTML="";const ids=state.photos[it.id]||[];ttl.textContent="Photos & receipts"+(ids.length?" ("+ids.length+")":"");
+    ids.forEach((pid,i)=>{const t=btn("pcard"),im=el("img");im.alt="photo";t.append(im);getPhoto(pid).then(d=>{im.src=d;}).catch(()=>{t.textContent="!";});t.onclick=()=>openViewer(it.id,i,paint);rail.append(t);});
+    if(!ids.length)rail.append(el("div","pempty","No photos yet. Add a receipt or a product photo."));};
+  inp.onchange=async()=>{const f=inp.files[0];inp.value="";if(!f)return;sp.textContent="Uploading…";try{const id=await uploadPhoto(f,it.id);(state.photos[it.id]=state.photos[it.id]||[]).push(id);save();toast("Photo added");}catch(e){toast(e.message==="noupload"?"Upload failed — check the Apps Script deployment":"Could not read the photo");}sp.textContent="+ Add photo";paint();};
   paint();return pb;
 }
 let sheetOnClose=null;
@@ -1051,18 +1130,17 @@ function openItem(id){
     const st=btn("state");const subHolder=el("div");
     const paint=()=>{st.className="state"+(done?" on":"");st.innerHTML="";st.append(el("i"));const x=el("span");x.append(el("b",null,done?"Completed":"Pending"),el("br"),el("small",null,done?"Tap to mark as pending":"Tap when the task is done"));st.append(x);};
     if(isParent)b.append(subHolder);else{paint();st.onclick=()=>{done=!done;paint();};b.append(st);}
-    const f1=field("Assigned to (one or more people)","text",state.who[it.id],"Tap names below, or type: Ram, Shyam");f1.input.setAttribute("autocomplete","off");
-    const names=allNames();
-    const chips=el("div","namechips");
-    const cur=()=>f1.input.value.split(",").map(s=>s.trim()).filter(Boolean);
-    const paintChips=()=>{chips.innerHTML="";const sel=cur();[...new Set(names.concat(sel))].forEach(n=>{const c=btn("nchip"+(sel.includes(n)?" on":""),n);c.onclick=()=>{const s=cur();f1.input.value=(s.includes(n)?s.filter(x=>x!==n):s.concat(n)).join(", ");paintChips();};chips.append(c);});};
-    f1.input.oninput=paintChips;paintChips();f1.wrap.append(chips);
+    let assigned=normN(state.who[it.id]);
+    const af=el("div","fld");af.append(el("span",null,"Assigned to"));
+    const ab=btn("assignbtn");
+    const paintA=()=>{ab.innerHTML="";const ns=assigned.split(",").map(x=>x.trim()).filter(Boolean);if(ns.length)ns.forEach(n=>ab.append(el("span","pill who",n)));else ab.append(el("span","ph","Tap to assign"));ab.append(el("span","chev"));};
+    ab.onclick=()=>openNamePicker(assigned,v=>{assigned=v;paintA();});paintA();af.append(ab);
     const f2=field("Contact & notes","textarea",state.note[it.id],"Vendor name, phone, rate, advance, address…");autosize(f2.input);
     const calls=el("div","calls");
     const showCalls=()=>{calls.innerHTML="";(f2.input.value.match(PHONE)||[]).forEach(n=>{const a=el("a",null,"Call "+n.trim());a.href="tel:"+n.replace(/[\s-]/g,"");calls.append(a);});};
     f2.input.addEventListener("input",showCalls);showCalls();
-    b.append(f1.wrap,f2.wrap,calls,contactsBlock(it));if(SHEET_URL)b.append(photosBlock(it));
-    const commit=()=>{if(discard)return false;const w=normN(f1.input.value),n=f2.input.value;
+    b.append(af,f2.wrap,calls,contactsBlock(it));if(SHEET_URL)b.append(photosBlock(it));
+    const commit=()=>{if(discard)return false;const w=normN(assigned),n=f2.input.value;
       const ch=w!==normN(state.who[it.id])||n!==(state.note[it.id]||"")||(!isParent&&done!==!!state.checked[it.id]);
       if(!ch)return false;state.who[it.id]=w;state.note[it.id]=n;if(!isParent)state.checked[it.id]=done;save();return true;};
     if(isParent){const info=el("div","sub-sum");const upd=()=>{info.textContent=ks.filter(x=>state.checked[x.id]).length+" of "+ks.length+" subtasks done";};upd();subHolder.append(info);
@@ -1310,6 +1388,11 @@ function render(){
 $("back").onclick=()=>history.back();
 $("fab").onclick=()=>{if(view.tab==="events"){if(view.ev)openItemEdit(null,{ev:view.ev});else openEventEdit(null);}else openItemEdit(null,{sec:view.sec});};
 $("sync").onclick=()=>toast(statusText||"…");
+function curTheme(){return document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light";}
+function paintTheme(){const t=curTheme(),b=$("themeBtn");b.innerHTML="";b.append(svg(t==="dark"?ICON.sun:ICON.moon));b.setAttribute("aria-label",t==="dark"?"Switch to light mode":"Switch to dark mode");
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{m.removeAttribute("media");m.setAttribute("content",t==="dark"?"#121010":"#F7F3EC");});}
+$("themeBtn").onclick=()=>{const n=curTheme()==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem(KEY+"-theme",n);}catch(e){}paintTheme();};
+paintTheme();
 
 /* ---------- lock gate ---------- */
 function okFlag(v){try{if(v===undefined)return localStorage.getItem(KEY+"-ok")==="1";if(v)localStorage.setItem(KEY+"-ok","1");else localStorage.removeItem(KEY+"-ok");}catch(e){return false;}}
